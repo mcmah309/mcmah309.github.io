@@ -4,13 +4,13 @@
         "snippet": "Test snippet",
         "publishTime": "2024/05/10",
         "type": "rust",
-        "contentPath": "blog_posts/test.md"
+        "fileName": "test.md"
     },
     {
         "title": "Test",
         "snippet": "Test snippet",
         "publishTime": "2024/05/10",
         "type": "rust",
-        "contentPath": "blog_posts/test.md"
+        "fileName": "test.md"
     }
 ]
