@@ -1,16 +1,9 @@
 [
     {
-        "title": "Test",
-        "snippet": "Test snippet",
-        "publishTime": "2024/05/10",
-        "type": "rust",
-        "fileName": "test"
-    },
-    {
-        "title": "Test",
-        "snippet": "Test snippet",
-        "publishTime": "2024/05/10",
-        "type": "rust",
-        "fileName": "test"
+        "title": "Package Highlight #1 `dart_mappable`",
+        "snippet": "Most developers are aware of the freezed package, but less so have heard of dart_mappable",
+        "publishTime": "2024/06/28",
+        "type": "dart",
+        "fileName": "package_highlight_001.md"
     }
 ]
