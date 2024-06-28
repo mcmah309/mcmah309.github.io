@@ -55,7 +55,7 @@ MyClass(this.myValue) {
 ### Generics and Inheritance
 Dealing with generics is easy, since only regular dart code is needed, there's no need to use additional annotations like `@With` or `@Implements`.
 ## Drawbacks
-Since you do not declare a `fromJson` constructor with `dart_mappable` it generates one for you, folling the `<class_name>Mapper`
+Since you do not declare a `fromJson` constructor with `dart_mappable` it generates one for you, following the `<class_name>Mapper`
 convention.
 ```dart
 MyClassMapper.fromJson(json);
