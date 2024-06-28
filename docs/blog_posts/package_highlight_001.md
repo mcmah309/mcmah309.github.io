@@ -60,7 +60,7 @@ convention.
 ```dart
 MyClassMapper.fromJson(json);
 ```
-This is really a style preference since with `freezed` you have to reference the class anyways (`MyClass.fromJson(json`).
+This is really a style preference since with `freezed` you have to reference the class anyways (`MyClass.fromJson(json)`).
 This may become more useful if the lanugage team ever decides to support [abstract static methods](https://github.com/dart-lang/language/issues/356).
 
 Another difference that some may consider a benefit or drawback is `freezed` tries to force immutability (unless you use `@unfreezed`).
