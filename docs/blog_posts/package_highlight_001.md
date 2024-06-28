@@ -1,14 +1,13 @@
-# Package Highlight #1 `dart_mappable`
+# Package Highlight: `dart_mappable`
 
-[https://pub.dev/packages/dart\_mappable](https://pub.dev/packages/dart_mappable)
+[https://pub.dev/packages/dart_mappable](https://pub.dev/packages/dart_mappable)
 
-Most developers are aware of the [freezed](https://pub.dev/packages/freezed) package, but less so have heard of [dart_mappable](https://pub.dev/packages/dart_mappable). Both packages attempt to bring "data classes" to Dart, but `dart_mappable` makes a few tradeoffs and gets a host of benefits in return. 
+Many developers are familiar with the [freezed](https://pub.dev/packages/freezed) package, but fewer have heard of [dart_mappable](https://pub.dev/packages/dart_mappable). Both packages aim to bring [data classes](https://kotlinlang.org/docs/data-classes.html) to Dart, but `dart_mappable` makes a few tradeoffs to offer significant benefits in return.
 
-## Benefits
-From the docs:
-> dart_mappable covers all basic feature (from/to json, == override, hashCode, toString(), copyWith) while adding new or improved support for advances use-cases including generics, inheritance and polymorphism, customization and more.
+From the documentation:
+> dart_mappable covers all basic features (from/to json, == override, hashCode, toString(), copyWith) while adding new or improved support for advanced use-cases including generics, inheritance and polymorphism, customization, and more.
 
-Plus far less boilplate. Let's see it in action.
+Additionally, it requires far less boilerplate. Let's see it in action:
 
 ***dart_mappable***
 ```dart
@@ -21,6 +20,8 @@ class MyClass with MyClassMappable {
   MyClass({required this.myValue});
 }
 ```
+vs
+
 ***freezed***
 ```dart
 part 'model.freezed.dart';
@@ -36,31 +37,36 @@ class MyClass with _$MyClass {
   factory MyClass.fromJson(Map<String, dynamic> json) => _$MyClassFromJson(json);
 }
 ```
-With `dart_mappable` the code is a lot more concise and forgiving to Dart developers. One would be hardpressed to mess up the syntax of `dart_mappable` - just add `@MappableClass()` and `with <class_name>Mappable`. While with `freezed`, it is pretty easy to mess up all the syntactic nuances `required final ..` `@Default(...) final ..`, `_$`, `_`, `_$..FromJson`, `@JsonSerializable(explicitToJson: true)`, `factory`, etc. With `dart_mappable` you just write dart code and it takes care of the rest.
-
-Conciseness is great, but functionability also matters. Well, just being able to write Dart code lets you have all the powers of Dart code (of course)! You are not beholden to a `freezed` like constructor, use any dart one you like
+## Benefits
+### Boilerplate
+With `dart_mappable` the code is a lot more concise and forgiving to Dart developers. It's difficult to make a syntactic error with `dart_mappable` - just add `@MappableClass()` and `with <class_name>Mappable`. While with `freezed`, it is pretty easy to mess up all the syntactic nuances `required final ..`, `@Default(...) final ..`, `_$`, `_`, `_$..FromJson`, `@JsonSerializable(explicitToJson: true)`, `factory`, etc. With `dart_mappable` you just write dart code and it takes care of the rest.
+### Custom Constructors and Flexibility
+Conciseness is great, but functionality is also important. With `dart_mappable`, you are not restricted to a `freezed`-like constructor; you can use any Dart constructor you prefer:
 ```dart
 MyClass(this.myValue);
-```
-```dart
 const MyClass(this.myValue);
-```
-```dart
 MyClass(this.myValue, [this.otherValue = 1]);
-```
-```dart
 MyClass(this.myValue, {this.otherValue}): assert(myValue > 0); // not `@Assert('...')` needed
-```
-```dart
 MyClass(this.myValue) {
     date = DateTime.now(); // Non-const default values :)
     // other logic
 }
 ```
-Dealing with generics is easy, no need to use additional annotations like
+### Generics and Inheritance
+Dealing with generics is easy, since only regular dart code is needed, there's no need to use additional annotations like `@With` or `@Implements`.
+## Drawbacks
+Since you do not declare a `fromJson` constructor with `dart_mappable` it generates one for you, folling the `<class_name>Mapper`
+convention.
 ```dart
-@With
-@Implements
- ```
+MyClassMapper.fromJson(json);
+```
+This is really a style preference since with `freezed` you have to reference the class anyways (`MyClass.fromJson(json`).
+This may become more useful if the lanugage team ever decides to support [abstract static methods](https://github.com/dart-lang/language/issues/356).
 
-At the end of the day, `dart_mappable` gives Dart developers all the abilities they usually choice `freezed` for without getting in their way.
+Another difference that some may consider a benefit or drawback is `freezed` tries to force immutability (unless you use `@unfreezed`).
+While `dart_mapper` leaves that it up to the user. Personally I always lean towards more power to the developer.
+
+## Conclusion
+At the end of the day, `dart_mappable` gives Dart developers all the capabilities they usually choose `freezed` for, without getting in their way.
+
+Looking ahead, both of these approaches might become obsolete when [static metaprogramming](https://github.com/dart-lang/language/issues/1482) lands in early 2025.
