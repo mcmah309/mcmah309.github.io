@@ -2,9 +2,11 @@
 
 [https://pub.dev/packages/dart\_mappable](https://pub.dev/packages/dart_mappable)
 
-Most developers are aware of the [freezed](https://pub.dev/packages/freezed) package, but less so have heard of [dart_mappable](https://pub.dev/packages/dart_mappable). `dart_mappable` makes the trade of allowing field mutability gets a host of benefits in return. From the docs:
+Most developers are aware of the [freezed](https://pub.dev/packages/freezed) package, but less so have heard of [dart_mappable](https://pub.dev/packages/dart_mappable). Both packages attempt to bring "data classes" to Dart, but `dart_mappable` makes a few tradeoffs and gets a host of benefits in return. 
 
-> all basic feature (from/to json, == override, hashCode, toString(), copyWith) while adding new or improved support for advances use-cases including generics, inheritance and polymorphism, customization and more.
+## Benefits
+From the docs:
+> dart_mappable covers all basic feature (from/to json, == override, hashCode, toString(), copyWith) while adding new or improved support for advances use-cases including generics, inheritance and polymorphism, customization and more.
 
 Plus far less boilplate. Let's see it in action.
 
