@@ -49484,7 +49484,7 @@ return A.f7(s,new A.bp(s,100,new A.iD(new A.a8b(),s),s),B.t,B.cV,s,s,s,s,s,s,s,s
 $S:460}
 A.a8b.prototype={
 $2(a,b){var s=null,r=b.b,q=r*0.15,p=t.p
-return A.eM(A.a([B.kX,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,r*0.7),A.r2(A.a([new A.bp(q,s,s,s),B.SW,B.dp,A.ayu(s,B.F9,s,new A.a8a(),s,s,s),new A.bp(q,s,s,s)],p),B.a5,B.Z,B.a6,s)],p),B.a5,B.Z,B.a6,s,B.ad)},
+return A.eM(A.a([B.kX,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,r*0.7),A.r2(A.a([new A.bp(q,s,s,s),B.SV,B.dp,A.ayu(s,B.F9,s,new A.a8a(),s,s,s),new A.bp(q,s,s,s)],p),B.a5,B.Z,B.a6,s)],p),B.a5,B.Z,B.a6,s,B.ad)},
 $S:72}
 A.a8a.prototype={
 $0(){self.window.open("https://github.com/mcmah309","mcmah309 github")},
@@ -49578,7 +49578,7 @@ $1(a){return A.hQ(new A.iD(new A.aqb(this.a,this.b),null),null,null)},
 $S:478}
 A.aqb.prototype={
 $2(a,b){var s=null,r=b.b,q=r*0.03,p=t.p
-return A.r2(A.a([B.dp,A.eM(A.a([A.r2(A.a([B.SV,new A.bp(r*0.05,s,s,s),A.aDx(this.a,B.Du,0,q),A.aDx(this.b,B.Dv,q,0)],p),B.a5,B.Z,B.a6,s),B.hV,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,r*0.7),B.kX],p),B.a5,B.Z,B.a6,s,B.ad),B.dp],p),B.a5,B.Z,B.a6,s)},
+return A.r2(A.a([B.dp,A.eM(A.a([A.r2(A.a([B.SU,new A.bp(r*0.05,s,s,s),A.aDx(this.a,B.Du,0,q),A.aDx(this.b,B.Dv,q,0)],p),B.a5,B.Z,B.a6,s),B.hV,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,r*0.7),B.kX],p),B.a5,B.Z,B.a6,s,B.ad),B.dp],p),B.a5,B.Z,B.a6,s)},
 $S:479}
 A.aqf.prototype={
 $1(a){return new A.pJ(this.a,null)},
@@ -49856,7 +49856,7 @@ A.Ve.prototype={
 H(a){return new A.iD(new A.aqp(),null)}}
 A.aqp.prototype={
 $2(a,b){var s=null
-return A.eM(A.a([B.zS,B.SS,B.hV,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,b.b*0.7),B.kX,new A.iD(new A.aqo(),s),B.hV],t.p),B.a5,B.Z,B.a6,s,B.ad)},
+return A.eM(A.a([B.zS,B.SY,B.hV,A.f7(s,s,B.t,B.dN,s,s,s,1,s,s,s,s,s,b.b*0.7),B.kX,new A.iD(new A.aqo(),s),B.hV],t.p),B.a5,B.Z,B.a6,s,B.ad)},
 $S:72}
 A.aqo.prototype={
 $2(a,b){var s=Math.max(0,b.c),r=Math.max(0,b.d)
@@ -49900,7 +49900,7 @@ s=new A.aeC(r).$0()
 break $label0$0}}return s},
 $S:535}
 A.aeC.prototype={
-$0(){var s=null,r=this.a.a,q=r.a.a,p=A.cy('<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <title>REPLACE_ME_TITLE</title>\n    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown.min.css" />\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>\n</head>\n<style>\n    body {\n        background-color: REPLACE_ME_BACKGROUND_COLOR;\n        color: #000;\n        font-family: Arial, sans-serif;\n        margin: 20px;\n    }\n    .markdown-body {\n        box-sizing: border-box;\n        min-width: 200px;\n        max-width: 980px;\n        margin: 0 auto;\n        padding: 45px;\n        color: #000; \n        background-color: REPLACE_ME_ARTICLE_COLOR;\n    }\n    pre {\n      background-color: #f6f8fa !important;\n    }\n    @media (max-width: 767px) {\n        .markdown-body {\n            padding: 15px;\n        }\n    }\n</style>\n<body>\n    <article class="markdown-body" id="content"></article>\n    <script id="markdown" type="text/markdown">\nREPLACE_ME_MARKDOWN_CONTENT\n    </script>\n    <script>\n        document.addEventListener(\'DOMContentLoaded\', function () {\n            const markdownContent = document.getElementById(\'markdown\').textContent;\n            const contentElement = document.getElementById(\'content\');\n            contentElement.innerHTML = marked.parse(markdownContent);\n            document.querySelectorAll(\'pre code\').forEach(function(block) {\n                hljs.highlightBlock(block);\n                block.style.backgroundColor = \'#f5f5f5\';\n            });\n            const links = document.querySelectorAll(\'a\');\n            links.forEach(function(link) {\n                link.addEventListener(\'click\', function(event) {\n                    event.preventDefault();\n                    console.log(\'Link clicked:\', link.href);\n                    window.open(link.href, \'_blank\');\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n',"REPLACE_ME_MARKDOWN_CONTENT",r.b)
+$0(){var s=null,r=this.a.a,q=r.a.a,p=A.cy('<!DOCTYPE html>\n<html lang="en">\n<head>\n    <meta charset="UTF-8" />\n    <meta name="viewport" content="width=device-width, initial-scale=1.0" />\n    <title>REPLACE_ME_TITLE</title>\n    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" />\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>\n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.6.1/github-markdown.min.css" />\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dart.min.js"></script>\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>\n    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>\n</head>\n<style>\n    body {\n        background-color: REPLACE_ME_BACKGROUND_COLOR;\n        color: #000;\n        font-family: Arial, sans-serif;\n        margin: 20px;\n    }\n    .markdown-body {\n        box-sizing: border-box;\n        min-width: 200px;\n        max-width: 980px;\n        margin: 0 auto;\n        padding: 45px;\n        color: #000; \n        background-color: REPLACE_ME_ARTICLE_COLOR;\n    }\n    pre {\n      background-color: #f6f8fa !important;\n    }\n    @media (max-width: 767px) {\n        .markdown-body {\n            padding: 15px;\n        }\n    }\n</style>\n<body>\n    <article class="markdown-body" id="content"></article>\n    <script id="markdown" type="text/markdown">\nREPLACE_ME_MARKDOWN_CONTENT\n    </script>\n    <script>\n        document.addEventListener(\'DOMContentLoaded\', function () {\n            const markdownContent = document.getElementById(\'markdown\').textContent;\n            const contentElement = document.getElementById(\'content\');\n            contentElement.innerHTML = marked.parse(markdownContent);\n            document.querySelectorAll(\'pre code\').forEach(function(block) {\n                hljs.highlightBlock(block);\n            });\n            const links = document.querySelectorAll(\'a\');\n            links.forEach(function(link) {\n                link.addEventListener(\'click\', function(event) {\n                    event.preventDefault();\n                    console.log(\'Link clicked:\', link.href);\n                    window.open(link.href, \'_blank\');\n                });\n            });\n        });\n    </script>\n</body>\n</html>\n',"REPLACE_ME_MARKDOWN_CONTENT",r.b)
 q=A.cy(p,"REPLACE_ME_TITLE",q)
 p=A.aDh(B.j5)
 q=A.cy(q,"REPLACE_ME_BACKGROUND_COLOR",p)
@@ -51758,7 +51758,7 @@ A.EC.prototype={
 a6f(a,b,c){var s,r=null
 if(b==null)return B.aa
 s=A.ik(b,1,B.bc,r,r,r)
-return new A.je(B.iu,1,r,b.length>12?B.SU:s,r)},
+return new A.je(B.iu,1,r,b.length>12?B.ST:s,r)},
 H(a){var s=this.d
 if(s instanceof A.mU&&!s.gAI()){s.toString
 s=t.My.a(s).A7$
@@ -89797,7 +89797,7 @@ A.Yy.prototype={}
 A.uf.prototype={
 H(a){var s=null,r=this.c
 r=r==null?s:"GoException: "+r.a
-return A.PP(!0,A.hQ(A.eM(A.a([B.ST,B.yK,A.ik(r==null?"page not found":r,s,s,s,s,s),B.yK,new A.EK(new A.a7f(a),B.SX,s)],t.p),B.a5,B.hb,B.a6,s,B.ad),s,s),B.av,!0)}}
+return A.PP(!0,A.hQ(A.eM(A.a([B.SS,B.yK,A.ik(r==null?"page not found":r,s,s,s,s,s),B.yK,new A.EK(new A.a7f(a),B.SW,s)],t.p),B.a5,B.hb,B.a6,s,B.ad),s,s),B.av,!0)}}
 A.a7f.prototype={
 $0(){return A.kx(this.a).j4(0,"/",null)},
 $S:0}
@@ -96528,8 +96528,8 @@ B.iL=new A.a3j(0,"pixel")
 B.C0=new A.z4(null,null,null,null,null,null,null)
 B.SZ=new A.ep("There was an error loading blog posts",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.C1=new A.f5(B.K,null,null,B.SZ,null)
-B.SY=new A.ep("Error: Could Not Load Post.",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.C2=new A.f5(B.K,null,null,B.SY,null)
+B.SX=new A.ep("Error: Could Not Load Post.",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.C2=new A.f5(B.K,null,null,B.SX,null)
 B.Z=new A.nY(0,"start")
 B.a6=new A.Nr(1,"max")
 B.a5=new A.tW(2,"center")
@@ -98873,16 +98873,16 @@ B.S4=new A.y(!0,B.F,null,"Roboto",B.I,null,null,null,null,null,null,null,null,nu
 B.Rx=new A.y(!0,B.l,null,"Roboto",B.I,null,null,null,null,null,null,null,null,null,null,null,null,B.e,null,null,null,"blackHelsinki labelMedium",null,null,null,null)
 B.RH=new A.y(!0,B.l,null,"Roboto",B.I,null,null,null,null,null,null,null,null,null,null,null,null,B.e,null,null,null,"blackHelsinki labelSmall",null,null,null,null)
 B.SR=new A.dB(B.Sn,B.PY,B.QM,B.Rw,B.RJ,B.Pt,B.Qq,B.Px,B.Rj,B.RV,B.QT,B.RW,B.S4,B.Rx,B.RH)
-B.SS=new A.ep("I'm a software engineer and CEO of Voyver.",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.ST=new A.ep("Page Not Found",null,B.hZ,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.SU=new A.ep("Back",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.SS=new A.ep("Page Not Found",null,B.hZ,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.ST=new A.ep("Back",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.z6=new A.ep("Home",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.PI=new A.y(!0,B.l,null,null,null,null,30,B.cq,B.bL,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.SV=new A.ep("Henry McMahon",null,B.PI,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.SU=new A.ep("Henry McMahon",null,B.PI,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.R2=new A.y(!0,B.l,null,null,null,null,10,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.SW=new A.ep("Copyright @ 2024 Dillon Henry McMahon",null,B.R2,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.SV=new A.ep("Copyright @ 2024 Dillon Henry McMahon",null,B.R2,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.PH=new A.y(!0,B.k,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.SX=new A.ep("Go to home page",null,B.PH,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.SW=new A.ep("Go to home page",null,B.PH,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
+B.SY=new A.ep("I'm a software engineer",null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.Wk=new A.al9(0,"system")
 B.Kp=new A.k(0.05,0)
 B.Kq=new A.k(0.133333,0.06)
