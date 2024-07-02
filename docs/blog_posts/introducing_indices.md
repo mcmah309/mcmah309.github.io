@@ -1,5 +1,7 @@
 # Introducing `indices` - Macros and Methods For Safely Retrieving Multiple Mutable Indices Of A Mutable Slice
 
+Github: <https://github.com/mcmah309/indices>
+
 `indices` is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.
 
 
@@ -125,6 +127,3 @@ fn main() {
     }
 }
 ```
-
-
-Github: https://github.com/mcmah309/indices

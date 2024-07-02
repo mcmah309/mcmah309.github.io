@@ -19,5 +19,19 @@
         "publishTime": "2024/04/22",
         "tags": ["rust"],
         "urlPath": "introducing_indices"
+    },
+    {
+        "title": "Introducing `error_set`",
+        "snippet": "`error_set` a concise way to define errors and ergonomically coerce a subset into a superset with with just .into() or ?, and coerce between intersecting sets with coerce!",
+        "publishTime": "2024/04/08",
+        "tags": ["rust"],
+        "urlPath": "introducing_error_set"
+    },
+    {
+        "title": "`rust_core` 0.4 Release and Project Update",
+        "snippet": "`rust_core` is an implementation of the Rust's core library in Dart. The goal is to bring Rust's features and ergonomics to Dart. This also provides a seamless developer experience for any developer using both languages.",
+        "publishTime": "2024/03/03",
+        "tags": ["rust","dart"],
+        "urlPath": "rust_core_0_4_0"
     }
 ]
