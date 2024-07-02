@@ -4,7 +4,6 @@
         "snippet": "Most developers are aware of the freezed package, but less so have heard of dart_mappable",
         "publishTime": "2024/06/28",
         "tags": ["dart"],
-        "fileName": "package_highlight_001.md",
         "urlPath": "package_highlight_dart_mappable"
     },
     {
@@ -12,7 +11,13 @@
         "snippet": "The Result type can revolutionize your error handling by ensuring explicit and predictable control flows. Learn to avoid common pitfalls of traditional try-catch mechanisms and improve your code's reliability and maintainability.",
         "publishTime": "2024/07/02",
         "tags": ["dart"],
-        "fileName": "the_result_type_in_dart.md",
         "urlPath": "the_result_type_in_dart"
+    },
+    {
+        "title": "Introducing `indices`",
+        "snippet": "`indices` is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.",
+        "publishTime": "2024/04/22",
+        "tags": ["rust"],
+        "urlPath": "introducing_indices"
     }
 ]
