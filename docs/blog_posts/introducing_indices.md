@@ -4,14 +4,12 @@ Github: <https://github.com/mcmah309/indices>
 
 indices is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.
 
-
 ```rust 
 let (two, four) = indices!(slice, 2, 4);
 ```
 
-
 Getting multiple mutable indices can be tricky due to the language's strict borrowing rules.
-previously if you wanted to get multiple mutiple indices of a slice you could use `split_at_mut`
+previously if you wanted to get multiple multiple indices of a slice you could use `split_at_mut`
 ```rust
 let mut data = [1, 2, 3, 4, 5];
 let index1 = 2;
@@ -25,7 +23,6 @@ println!("{}", two); // 3
 println!("{}", four); // 5
 ```
 Although slightly more verbose, this is fine until there is more than the index and values are only known at runtime (especially if ordering may also be unknown).
-
 
 ## Macros
 All macros are zero allocation and allow retrieving a variable number of indices at runtime. Prefer macros when the number
