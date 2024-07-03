@@ -2,7 +2,7 @@
 
 Github: <https://github.com/mcmah309/indices>
 
-`indices` is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.
+indices is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.
 
 
 ```rust 
