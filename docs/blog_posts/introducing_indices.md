@@ -1,4 +1,4 @@
-# Introducing `indices` - Macros and Methods For Safely Retrieving Multiple Mutable Indices Of A Mutable Slice
+# Introducing indices - Macros and Methods For Safely Retrieving Multiple Mutable Indices Of A Mutable Slice
 
 Github: <https://github.com/mcmah309/indices>
 
