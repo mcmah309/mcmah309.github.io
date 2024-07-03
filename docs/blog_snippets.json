@@ -49,7 +49,7 @@
         "urlPath": "announcing_rust_core"
     },
     {
-        "title": "Anyhow v1.2.0: Migration to rust_core",
+        "title": "Anyhow v1.2.0 Migration to rust_core",
         "snippet": "Anyhow's Result type was migrated to rust_core and received a host of new features.",
         "publishTime": "2023/12/07",
         "tags": ["dart"],
