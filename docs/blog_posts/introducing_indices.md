@@ -11,8 +11,7 @@ let (two, four) = indices!(slice, 2, 4);
 
 
 Getting multiple mutable indices can be tricky due to the language's strict borrowing rules.
-previously if you wanted to get multiple mutiple indices of a slice you could use
-`split_at_mut`
+previously if you wanted to get multiple mutiple indices of a slice you could use `split_at_mut`
 ```rust
 let mut data = [1, 2, 3, 4, 5];
 let index1 = 2;
