@@ -77,6 +77,6 @@ Various additional extension methods were added.
 rust_core for being in pre-release is stable with about 400 tests and currently used in major applications under development internally. `0.4` May be the last
 minor release before `1.0.0` but there also may be a `0.5.0` release.
 
-Two new packages are under development [anyhow_logging] and [rust_std](https://github.com/mcmah309/rust_std).
-- [anyhow_logging](https://github.com/mcmah309/anyhow_logging) Log exactly what you want, while being aware of [anyhow] types.
+Two new packages are under development [rewind] and [rust_std](https://github.com/mcmah309/rust_std).
+- [rewind](https://github.com/mcmah309/rewind) Log exactly what you want, while being aware of [anyhow] types.
 - [rust_std](https://github.com/mcmah309/rust_std) An implementation of Rust's standard library in Dart.

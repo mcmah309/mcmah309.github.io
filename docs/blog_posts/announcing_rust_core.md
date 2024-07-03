@@ -6,4 +6,4 @@ Pub: <https://pub.dev/packages/rust_core>
 
 Github: <https://github.com/mcmah309/rust_core>
 
-A link you might also be interest in [Dart Equivalent To The Rust "?" Early Return Operator](https://github.com/mcmah309/rust_core/tree/master/lib/src/result#dart-equivalent-to-the-rust--early-return-operator)
+A link you might also be interest in [Dart Equivalent To The Rust "?" Early Return Operator](https://mcmah309.github.io/rust_core/introduction/quickstart.html#the-rust--operator-and-early-return-key-notion)
