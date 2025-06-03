@@ -5,7 +5,7 @@ url: "https://yourusername.github.io" # your site's URL
 baseurl: "" # subpath of your site, e.g. /blog
 
 # Theme
-theme: jekyll-theme-so-simple
+remote_theme: "mmistakes/so-simple-theme@3.2.0"
 
 # Locale
 locale: "en-US"
@@ -28,9 +28,6 @@ search_full_content: true
 category_archive_path: "/categories/#"
 tag_archive_path: "/tags/#"
 
-head_scripts:
-  - '<link rel="icon" type="image/x-icon" href="/favicon.ico">'
-
 # Footer links
 footer_links:
   # - title: "Twitter"
@@ -50,6 +47,7 @@ plugins:
   - jekyll-gist
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-remote-theme
 
 # Pagination
 paginate: 10
