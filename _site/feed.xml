@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2025-06-03T07:56:18+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Your Site Title</title><subtitle>&lt;h3&gt;
+  Welcome to my site
+&lt;/h3&gt; &lt;p&gt;
+  This is a brief description of your site. You can customize this in _config.yml
+&lt;/p&gt;</subtitle><entry><title type="html">My First Post with Tags and Categories</title><link href="http://localhost:4000/posts/examle-title" rel="alternate" type="text/html" title="My First Post with Tags and Categories" /><published>2024-01-15T15:30:00+00:00</published><updated>2024-01-15T15:30:00+00:00</updated><id>http://localhost:4000/posts/examle-title</id><content type="html" xml:base="http://localhost:4000/posts/examle-title"><![CDATA[<h1 id="welcome-to-my-first-post">Welcome to My First Post!</h1>
+
+<p>This is an example of how to create a Jekyll post with proper tags and categories.</p>
+
+<h2 id="what-are-categories">What are Categories?</h2>
+
+<p>Categories are broad topics that group your posts. Think of them as the main sections of your blog:</p>
+<ul>
+  <li>Tutorial</li>
+  <li>Personal</li>
+  <li>Technology</li>
+  <li>Travel</li>
+</ul>
+
+<h2 id="what-are-tags">What are Tags?</h2>
+
+<p>Tags are more specific keywords that describe the content of your post:</p>
+<ul>
+  <li>beginner</li>
+  <li>advanced</li>
+  <li>web-development</li>
+  <li>javascript</li>
+  <li>css</li>
+</ul>
+
+<h2 id="content-example">Content Example</h2>
+
+<p>Here’s some sample content to show how the post looks:</p>
+
+<h3 id="code-example">Code Example</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">hello_world</span>
+  <span class="nb">puts</span> <span class="s2">"Hello, Jekyll!"</span>
+<span class="k">end</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="lists-work-too">Lists Work Too</h3>
+
+<ul>
+  <li>Point one</li>
+  <li>Point two</li>
+  <li>Point three</li>
+</ul>
+
+<p>That’s it! This post will now appear on your site with the specified categories and tags.</p>]]></content><author><name>Your Name</name></author><category term="tutorial" /><category term="jekyll" /><category term="beginner" /><category term="web-development" /><category term="static-sites" /><category term="blogging" /><summary type="html"><![CDATA[Welcome to My First Post!]]></summary></entry></feed>

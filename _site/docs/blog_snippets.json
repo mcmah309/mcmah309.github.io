@@ -1,0 +1,65 @@
+[
+    {
+        "title": "Package Highlight #1 `dart_mappable`",
+        "snippet": "Most developers are aware of the freezed package, but less so have heard of dart_mappable",
+        "publishTime": "2024/06/28",
+        "tags": ["dart"],
+        "urlPath": "package_highlight_dart_mappable"
+    },
+    {
+        "title": "The `Result` Type In Dart",
+        "snippet": "The Result type can revolutionize your error handling by ensuring explicit and predictable control flows. Learn to avoid common pitfalls of traditional try-catch mechanisms and improve your code's reliability and maintainability.",
+        "publishTime": "2024/07/02",
+        "tags": ["dart"],
+        "urlPath": "the_result_type_in_dart"
+    },
+    {
+        "title": "Introducing `indices`",
+        "snippet": "`indices` is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.",
+        "publishTime": "2024/04/22",
+        "tags": ["rust"],
+        "urlPath": "introducing_indices"
+    },
+    {
+        "title": "Introducing `error_set`",
+        "snippet": "`error_set` a concise way to define errors and ergonomically coerce a subset into a superset with with just .into() or ?, and coerce between intersecting sets with coerce!",
+        "publishTime": "2024/04/08",
+        "tags": ["rust"],
+        "urlPath": "introducing_error_set"
+    },
+    {
+        "title": "`rust_core` 0.4 Release and Project Update",
+        "snippet": "`rust_core` is an implementation of the Rust's core library in Dart. The goal is to bring Rust's features and ergonomics to Dart. This also provides a seamless developer experience for any developer using both languages.",
+        "publishTime": "2024/03/03",
+        "tags": ["rust","dart"],
+        "urlPath": "rust_core_0_4_0"
+    },
+    {
+        "title": "Announcing `activate`",
+        "snippet": "Activate allows you to switch an entire repo/monorepo between environments and reload environment changes with a single command.",
+        "publishTime": "2024/02/10",
+        "tags": ["rust"],
+        "urlPath": "announcing_activate"
+    },
+    {
+        "title": "Announcing `rust_core`",
+        "snippet": "For Rust developers involved in programming with Dart, or Dart developers interested in idiomatic and safe programming, we have developed \"rust_core,\" a package designed to implement Rust's core library in Dart.",
+        "publishTime": "2023/12/11",
+        "tags": ["rust","dart"],
+        "urlPath": "announcing_rust_core"
+    },
+    {
+        "title": "Anyhow v1.2.0 Migration to rust_core",
+        "snippet": "Anyhow's Result type was migrated to rust_core and received a host of new features.",
+        "publishTime": "2023/12/07",
+        "tags": ["dart"],
+        "urlPath": "anyhow_1_2_0_migration_to_rust_core"
+    },
+    {
+        "title": "Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?",
+        "snippet": "ArrayVec, SmallVec, and TinyVec are more often then not used in a way that hurts your applications performance.",
+        "publishTime": "2023/11/21",
+        "tags": ["rust"],
+        "urlPath": "ArrayVec_or_SmallVec_or_TinyVec"
+    }
+]

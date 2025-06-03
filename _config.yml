@@ -1,0 +1,111 @@
+# Site settings
+title: Your Site Title
+description: >- # this means to ignore newlines until "baseurl:"
+  <h3>
+    Welcome to my site
+  </h3>
+  <p>
+    This is a brief description of your site. You can customize this in _config.yml
+  </p>
+
+url: "https://yourusername.github.io" # your site's URL
+baseurl: "" # subpath of your site, e.g. /blog
+
+# Theme settings
+theme: jekyll-theme-horizon-flow
+# remote_theme: papierkorp/jekyll-theme-horizon-flow # if you host on github pages
+
+# Reading time configuration
+read_time_after: "min read"
+words_per_minute: 180
+
+# Navigation
+navigation:
+  - title: Home
+    url: /index.html
+  - title: Categories
+    url: /categories.html
+  - title: Tags
+    url: /tags.html
+  - title: Archive
+    url: /archive.html
+  - title: Search
+    url: /search.html
+
+# Footer Links
+footer_links:
+  - title: Feed
+    url: /feed.xml
+    icon: fa fa-rss
+  - title: GitHub
+    url: https://github.com/yourusername
+    icon: fa fa-github
+  - title: Email
+    url: mailto:your.email@example.com
+    icon: fa fa-envelope
+  - title: Twitter
+    url: https://twitter.com/yourusername
+    icon: fa fa-twitter
+
+# Footer Sidebar
+footer_sidebar:
+  enabled: true
+  auto: false
+  arrangement:
+    - description
+    - tags
+    - categories
+    - recentposts
+  description:
+    enabled: true
+  categories:
+    enabled: true
+    count: 100
+    columns: 1
+  tags:
+    enabled: true
+    count: 100
+    columns: 3
+  recentposts:
+    enabled: true
+    count: 10
+    columns: 2
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Pagination
+paginate: 5
+paginate_path: "/:num/"
+
+# Include settings
+include: [".md"]
+
+# Markdown and syntax highlighting
+highlighter: rouge
+kramdown:
+  syntax_highlighter_opts:
+    block:
+      line_numbers: true
+
+# Language
+lang: en
+
+# Default settings
+defaults:
+  -
+    scope:
+      path: "_posts"
+    values:
+      toc: yes
+      display_toc: true
+
+# Permalink structure
+permalink: /posts/:title # remove date from link
+
+# Comments (optional - uncomment and configure if you want GitHub Issues comments)
+# issues_repo: yourusername/your-repo-name
