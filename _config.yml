@@ -1,111 +1,114 @@
 # Site settings
-title: Your Site Title
-description: >- # this means to ignore newlines until "baseurl:"
-  <h3>
-    Welcome to my site
-  </h3>
-  <p>
-    This is a brief description of your site. You can customize this in _config.yml
-  </p>
-
+title: "Your Site Title"
+description: "This is a brief description of your site. You can customize this description."
 url: "https://yourusername.github.io" # your site's URL
 baseurl: "" # subpath of your site, e.g. /blog
 
-# Theme settings
-theme: jekyll-theme-horizon-flow
-# remote_theme: papierkorp/jekyll-theme-horizon-flow # if you host on github pages
+# Theme
+theme: jekyll-theme-so-simple
+# remote_theme: "mmistakes/so-simple-theme@3.2.0" # use this for GitHub Pages
 
-# Reading time configuration
-read_time_after: "min read"
-words_per_minute: 180
+# Site author
+author:
+  name: "Your Name"
+  email: "your.email@example.com"
+  twitter: "yourusername"
+  picture: "/images/your-photo.jpg"
 
-# Navigation
-navigation:
-  - title: Home
-    url: /index.html
-  - title: Categories
-    url: /categories.html
-  - title: Tags
-    url: /tags.html
-  - title: Archive
-    url: /archive.html
-  - title: Search
-    url: /search.html
+# Site logo
+logo: "/images/site-logo.png"
 
-# Footer Links
+# Locale
+locale: "en-US"
+
+# Reading time
+read_time: true
+words_per_minute: 200
+
+# Comments via Disqus (optional)
+# disqus:
+#   shortname: "your-disqus-shortname"
+
+# Google Analytics (optional)
+# google_analytics: "UA-NNNNNNNN-N"
+
+# Google Fonts
+google_fonts:
+  - name: "Source Sans Pro"
+    weights: "400,400i,700,700i"
+  - name: "Lora"
+    weights: "400,400i,700,700i"
+
+# Skin (theme color scheme)
+skin: "/assets/css/skins/default.css"
+# Options: "/assets/css/skins/default.css", "/assets/css/skins/light.css", "/assets/css/skins/dark.css"
+
+# Search
+search_full_content: true
+
+# Taxonomy archive links
+category_archive_path: "/categories/#"
+tag_archive_path: "/tags/#"
+
+# Footer links
 footer_links:
-  - title: Feed
-    url: /feed.xml
-    icon: fa fa-rss
-  - title: GitHub
-    url: https://github.com/yourusername
-    icon: fa fa-github
-  - title: Email
-    url: mailto:your.email@example.com
-    icon: fa fa-envelope
-  - title: Twitter
-    url: https://twitter.com/yourusername
-    icon: fa fa-twitter
-
-# Footer Sidebar
-footer_sidebar:
-  enabled: true
-  auto: false
-  arrangement:
-    - description
-    - tags
-    - categories
-    - recentposts
-  description:
-    enabled: true
-  categories:
-    enabled: true
-    count: 100
-    columns: 1
-  tags:
-    enabled: true
-    count: 100
-    columns: 3
-  recentposts:
-    enabled: true
-    count: 10
-    columns: 2
+  - title: "Twitter"
+    url: "https://twitter.com/yourusername"
+    icon: "fab fa-twitter-square"
+  - title: "GitHub"
+    url: "https://github.com/yourusername"
+    icon: "fab fa-github-square"
+  - title: "Feed"
+    url: "/feed.xml"
+    icon: "fas fa-rss-square"
 
 # Plugins
 plugins:
-  - jekyll-feed
   - jekyll-paginate
-  - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-gist
+  - jekyll-feed
+  - jekyll-seo-tag
 
 # Pagination
-paginate: 5
-paginate_path: "/:num/"
+paginate: 10
+paginate_path: "/page:num/"
 
-# Include settings
-include: [".md"]
-
-# Markdown and syntax highlighting
-highlighter: rouge
+# Markdown processing
 kramdown:
   syntax_highlighter_opts:
     block:
       line_numbers: true
 
-# Language
-lang: en
+# Exclude from processing
+exclude:
+  - .asset-cache
+  - .bundle
+  - .jekyll-assets-cache
+  - .sass-cache
+  - CHANGELOG
+  - Capfile
+  - Gemfile
+  - Gruntfile.js
+  - LICENSE
+  - README
+  - Rakefile
+  - config
+  - gulpfile.js
+  - lib
+  - log
+  - node_modules
+  - package.json
+  - spec
+  - tmp
 
-# Default settings
+# Front matter defaults
 defaults:
-  -
-    scope:
+  # _posts
+  - scope:
       path: "_posts"
+      type: posts
     values:
-      toc: yes
-      display_toc: true
-
-# Permalink structure
-permalink: /posts/:title # remove date from link
-
-# Comments (optional - uncomment and configure if you want GitHub Issues comments)
-# issues_repo: yourusername/your-repo-name
+      layout: post
+      share: true
+      comments: true

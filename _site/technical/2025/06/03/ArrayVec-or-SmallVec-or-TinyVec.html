@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec? | Your Site Title</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?" />
+<meta name="author" content="Dillon McMahon" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?" />
+<meta property="og:description" content="Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?" />
+<link rel="canonical" href="http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html" />
+<meta property="og:url" content="http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html" />
+<meta property="og:site_name" content="Your Site Title" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-06-03T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dillon McMahon"},"dateModified":"2025-06-03T00:00:00+00:00","datePublished":"2025-06-03T00:00:00+00:00","description":"Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?","headline":"Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/site-logo.png"},"name":"Dillon McMahon"},"url":"http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/default.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Your Site Title" href="/feed.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  should-you-really-ever-use-arrayvec-or-smallvec-or-tinyvec-as-your-go-to-vec">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/posts/">Posts</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+      <a href="/" class="site-logo" rel="home" title="Your Site Title">
+        <img src="/images/site-logo.png" class="site-logo-img animated fadeInDown" alt="Your Site Title">
+      </a>
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Your Site Title</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">This is a brief description of your site. You can customize this description.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Dillon McMahon</span>
+      </div>
+
+<span class="read-time">2 min read</span>
+
+    <time class="page-date dt-published" datetime="2025-06-03T00:00:00+00:00"><a class="u-url" href="">June 3, 2025</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#technical" title="Pages filed under technical">technical</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#rust" title="Pages tagged rust" rel="tag">rust</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <h1 id="should-you-really-ever-use-arrayvec-or-smallvec-or-tinyvec-as-your-go-to-vec">Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?</h1>
+
+<h2 id="definitions">Definitions</h2>
+
+<p><strong>ArrayVec:</strong> This is a vector-like structure with a fixed maximum capacity. Unlike a regular array, its actual size can change dynamically at runtime, accommodating a variable number of elements up to its capacity. The memory for elements is initialized upon insertion. This makes <code class="language-plaintext highlighter-rouge">ArrayVec</code> suitable for situations where you need more flexibility than a regular array but with a predictable, fixed maximum size.</p>
+
+<p><strong>SmallVec:</strong> <code class="language-plaintext highlighter-rouge">SmallVec</code> acts like a vector, storing its items on the stack up to a predefined limit. If this limit is exceeded, it transitions to heap storage. This design is ideal when you have a “soft” upper size limit - cases where the collection rarely exceeds a certain size, but you want to avoid program failure if it does. It’s less optimal than a regular array or a <code class="language-plaintext highlighter-rouge">Vec</code> when used by itself outside this scenario.</p>
+
+<p><strong>TinyVec:</strong> This is a hybrid of <code class="language-plaintext highlighter-rouge">ArrayVec</code> and a heap-allocated <code class="language-plaintext highlighter-rouge">Vec</code>. Like <code class="language-plaintext highlighter-rouge">SmallVec</code>, it transitions from stack to heap storage when a limit is exceeded. However, TinyVec is distinct in that it avoids using “unsafe” code, potentially increasing safety. A limitation is that types stored in <code class="language-plaintext highlighter-rouge">TinyVec</code> must implement the Default trait.</p>
+
+<h2 id="discussion">Discussion</h2>
+
+<p>For all these “vector on the stack” types, careful consideration is crucial. Generally, they should be used for small collections (significantly less than the 1-2 MB typical stack size limit) to prevent stack overflow. Additionally, while these structures can be returned from functions, this actually might
+make these structures less performant. This is because compiler optimizations may invoke a “stack copy” when returning the value or passing the value to a function. Therefore, these should be primarily used within a single function’s scope and avoided in scenarios where large or unpredictable sizes are expected. Also each of these structures now have an extra branch (e.g. <code class="language-plaintext highlighter-rouge">.is_on_stack()</code>) for operations such as <code class="language-plaintext highlighter-rouge">.push()</code>.</p>
+
+<p>That said, the primary optimization to be made for vectors is not actually keeping them on the stack, it is avoiding re-allocations.
+The better strategy is to simply reuse a regular <code class="language-plaintext highlighter-rouge">Vec</code> between invocations - create it once, then use it, call <code class="language-plaintext highlighter-rouge">.clear()</code> on it and repeat. That way you get no additional allocations and no overhead on <code class="language-plaintext highlighter-rouge">.push()</code> or passing it around.</p>
+
+<p>The real use case for <code class="language-plaintext highlighter-rouge">SmallVec</code> and such is making a collection of them, such as <code class="language-plaintext highlighter-rouge">Vec&lt;SmallVec&gt;</code> (or more realistically <code class="language-plaintext highlighter-rouge">BTreeSet&lt;MyStruct&gt;</code> where <code class="language-plaintext highlighter-rouge">MyStruct</code> contains a <code class="language-plaintext highlighter-rouge">SmallVec</code> inside) to optimize for cache locality. Loads from RAM are slow compared to the speed of the CPU, so putting the data closer together minimizes the amount of loads.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Using any of these types is likely a premature optimization and the standard <code class="language-plaintext highlighter-rouge">Vec</code> should usually be preferred, unless the code is performance critical and previously mentioned bounds hold.</p>
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2025%2F06%2F03%2FArrayVec-or-SmallVec-or-TinyVec.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Should+You+Really+Ever+Use+ArrayVec+or+SmallVec+or+TinyVec+As+Your+Go+To+Vec%3F%20http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2025%2F06%2F03%2FArrayVec-or-SmallVec-or-TinyVec.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2025%2F06%2F03%2FArrayVec-or-SmallVec-or-TinyVec.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Should+You+Really+Ever+Use+ArrayVec+or+SmallVec+or+TinyVec+As+Your+Go+To+Vec%3F&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2025%2F06%2F03%2FArrayVec-or-SmallVec-or-TinyVec.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/technical/2024/07/02/the-result-type-in-dart.html">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> The Result Type In Dart
+
+      </span>
+    </a>
+  
+
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="https://twitter.com/yourusername"><i class="fab fa-twitter-square fa-2x" title="Twitter"></i></a><a class="social-icon" href="https://github.com/yourusername"><i class="fab fa-github-square fa-2x" title="GitHub"></i></a><a class="social-icon" href="/feed.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2025 Your Site Title. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>

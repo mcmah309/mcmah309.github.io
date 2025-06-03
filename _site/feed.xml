@@ -1,52 +1,776 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" hreflang="en" /><updated>2025-06-03T07:56:18+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Your Site Title</title><subtitle>&lt;h3&gt;
-  Welcome to my site
-&lt;/h3&gt; &lt;p&gt;
-  This is a brief description of your site. You can customize this in _config.yml
-&lt;/p&gt;</subtitle><entry><title type="html">My First Post with Tags and Categories</title><link href="http://localhost:4000/posts/examle-title" rel="alternate" type="text/html" title="My First Post with Tags and Categories" /><published>2024-01-15T15:30:00+00:00</published><updated>2024-01-15T15:30:00+00:00</updated><id>http://localhost:4000/posts/examle-title</id><content type="html" xml:base="http://localhost:4000/posts/examle-title"><![CDATA[<h1 id="welcome-to-my-first-post">Welcome to My First Post!</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2025-06-03T09:31:09+00:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Your Site Title</title><subtitle>This is a brief description of your site. You can customize this description.</subtitle><author><name>Your Name</name><email>your.email@example.com</email></author><entry><title type="html">Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?</title><link href="http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html" rel="alternate" type="text/html" title="Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?" /><published>2025-06-03T00:00:00+00:00</published><updated>2025-06-03T00:00:00+00:00</updated><id>http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec</id><content type="html" xml:base="http://localhost:4000/technical/2025/06/03/ArrayVec-or-SmallVec-or-TinyVec.html"><![CDATA[<h1 id="should-you-really-ever-use-arrayvec-or-smallvec-or-tinyvec-as-your-go-to-vec">Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?</h1>
 
-<p>This is an example of how to create a Jekyll post with proper tags and categories.</p>
+<h2 id="definitions">Definitions</h2>
 
-<h2 id="what-are-categories">What are Categories?</h2>
+<p><strong>ArrayVec:</strong> This is a vector-like structure with a fixed maximum capacity. Unlike a regular array, its actual size can change dynamically at runtime, accommodating a variable number of elements up to its capacity. The memory for elements is initialized upon insertion. This makes <code class="language-plaintext highlighter-rouge">ArrayVec</code> suitable for situations where you need more flexibility than a regular array but with a predictable, fixed maximum size.</p>
 
-<p>Categories are broad topics that group your posts. Think of them as the main sections of your blog:</p>
-<ul>
-  <li>Tutorial</li>
-  <li>Personal</li>
-  <li>Technology</li>
-  <li>Travel</li>
-</ul>
+<p><strong>SmallVec:</strong> <code class="language-plaintext highlighter-rouge">SmallVec</code> acts like a vector, storing its items on the stack up to a predefined limit. If this limit is exceeded, it transitions to heap storage. This design is ideal when you have a “soft” upper size limit - cases where the collection rarely exceeds a certain size, but you want to avoid program failure if it does. It’s less optimal than a regular array or a <code class="language-plaintext highlighter-rouge">Vec</code> when used by itself outside this scenario.</p>
 
-<h2 id="what-are-tags">What are Tags?</h2>
+<p><strong>TinyVec:</strong> This is a hybrid of <code class="language-plaintext highlighter-rouge">ArrayVec</code> and a heap-allocated <code class="language-plaintext highlighter-rouge">Vec</code>. Like <code class="language-plaintext highlighter-rouge">SmallVec</code>, it transitions from stack to heap storage when a limit is exceeded. However, TinyVec is distinct in that it avoids using “unsafe” code, potentially increasing safety. A limitation is that types stored in <code class="language-plaintext highlighter-rouge">TinyVec</code> must implement the Default trait.</p>
 
-<p>Tags are more specific keywords that describe the content of your post:</p>
-<ul>
-  <li>beginner</li>
-  <li>advanced</li>
-  <li>web-development</li>
-  <li>javascript</li>
-  <li>css</li>
-</ul>
+<h2 id="discussion">Discussion</h2>
 
-<h2 id="content-example">Content Example</h2>
+<p>For all these “vector on the stack” types, careful consideration is crucial. Generally, they should be used for small collections (significantly less than the 1-2 MB typical stack size limit) to prevent stack overflow. Additionally, while these structures can be returned from functions, this actually might
+make these structures less performant. This is because compiler optimizations may invoke a “stack copy” when returning the value or passing the value to a function. Therefore, these should be primarily used within a single function’s scope and avoided in scenarios where large or unpredictable sizes are expected. Also each of these structures now have an extra branch (e.g. <code class="language-plaintext highlighter-rouge">.is_on_stack()</code>) for operations such as <code class="language-plaintext highlighter-rouge">.push()</code>.</p>
 
-<p>Here’s some sample content to show how the post looks:</p>
+<p>That said, the primary optimization to be made for vectors is not actually keeping them on the stack, it is avoiding re-allocations.
+The better strategy is to simply reuse a regular <code class="language-plaintext highlighter-rouge">Vec</code> between invocations - create it once, then use it, call <code class="language-plaintext highlighter-rouge">.clear()</code> on it and repeat. That way you get no additional allocations and no overhead on <code class="language-plaintext highlighter-rouge">.push()</code> or passing it around.</p>
 
-<h3 id="code-example">Code Example</h3>
+<p>The real use case for <code class="language-plaintext highlighter-rouge">SmallVec</code> and such is making a collection of them, such as <code class="language-plaintext highlighter-rouge">Vec&lt;SmallVec&gt;</code> (or more realistically <code class="language-plaintext highlighter-rouge">BTreeSet&lt;MyStruct&gt;</code> where <code class="language-plaintext highlighter-rouge">MyStruct</code> contains a <code class="language-plaintext highlighter-rouge">SmallVec</code> inside) to optimize for cache locality. Loads from RAM are slow compared to the speed of the CPU, so putting the data closer together minimizes the amount of loads.</p>
 
-<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Using any of these types is likely a premature optimization and the standard <code class="language-plaintext highlighter-rouge">Vec</code> should usually be preferred, unless the code is performance critical and previously mentioned bounds hold.</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="rust" /><summary type="html"><![CDATA[Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?]]></summary></entry><entry><title type="html">The `Result` Type In Dart</title><link href="http://localhost:4000/technical/2024/07/02/the-result-type-in-dart.html" rel="alternate" type="text/html" title="The `Result` Type In Dart" /><published>2024-07-02T00:00:00+00:00</published><updated>2024-07-02T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/07/02/the-result-type-in-dart</id><content type="html" xml:base="http://localhost:4000/technical/2024/07/02/the-result-type-in-dart.html"><![CDATA[<h1 id="the-result-type-in-dart">The Result Type In Dart</h1>
+
+<p>Every modern programming language has error handling. Like Python, Dart chose the unchecked try-catch catch pattern, Java went with checked try-catch pattern, Zig went with Error Unions, and Rust went the <code class="language-plaintext highlighter-rouge">Result</code> type.</p>
+
+<h2 id="what-is-a-result-monad-type-and-why-use-it">What Is a Result Monad Type And Why Use it?</h2>
+
+<p><code class="language-plaintext highlighter-rouge">Result</code> is often referred to as a “monad”. A monad is just a wrapper around an object that provides a standard way of interacting with the inner object. The
+<code class="language-plaintext highlighter-rouge">Result</code> monad is used in place of throwing exceptions. Instead, the function
+returns a <code class="language-plaintext highlighter-rouge">Result</code>, which can either be a <code class="language-plaintext highlighter-rouge">Ok</code> (Success) or <code class="language-plaintext highlighter-rouge">Err</code> (Error/Failure), <code class="language-plaintext highlighter-rouge">Result</code> is the sum type of the two.</p>
+
+<p>Using <code class="language-plaintext highlighter-rouge">Result</code> provides a predictable control flow to a program. Error handling is explicit as the caller of a function
+that returns an error must handle the possibility of an error at that point. At which the point, the calling function can resolve
+any possible issue or clean its state, where necessary, or pass the error up the chain until a function resolves
+the issue.</p>
+
+<h2 id="the-problem-with-dart-error-handling">The Problem With Dart Error Handling</h2>
+
+<p>The best way to illustrate the problem with Dart’s error handling is an example. Consider the following program,
+which doesn’t do anything useful, but we are more interested in the control flow:</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
 2
 3
-</pre></td><td class="rouge-code"><pre><span class="k">def</span> <span class="nf">hello_world</span>
-  <span class="nb">puts</span> <span class="s2">"Hello, Jekyll!"</span>
-<span class="k">end</span>
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+</pre></td><td class="rouge-code"><pre><span class="kt">void</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// try {</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">order</span><span class="p">(</span><span class="s">"Bob"</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+  <span class="c1">// } catch(e) {</span>
+    <span class="c1">// print(e);</span>
+  <span class="c1">// }</span>
+<span class="p">}</span>
+
+<span class="kt">String</span> <span class="nf">order</span><span class="p">(</span><span class="kt">String</span> <span class="n">user</span><span class="p">,</span> <span class="kt">int</span> <span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">final</span> <span class="n">result</span> <span class="o">=</span> <span class="n">makeFood</span><span class="p">(</span><span class="n">orderNumber</span><span class="p">);</span>
+  <span class="k">return</span> <span class="s">"Order of </span><span class="si">$result</span><span class="s"> is complete for </span><span class="si">$user</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">String</span> <span class="nf">makeFood</span><span class="p">(</span><span class="kt">int</span> <span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">switch</span><span class="p">(</span><span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+    <span class="mi">1</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">makeHamburger</span><span class="p">(),</span>
+    <span class="mi">2</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">makePasta</span><span class="p">(),</span>
+    <span class="c1">// Who catches this??</span>
+    <span class="c1">// How do we know we won't forget to catch this??</span>
+    <span class="n">_</span> <span class="o">=</span><span class="p">&gt;</span> <span class="k">throw</span> <span class="n">Exception</span><span class="p">(</span><span class="s">"Unknown order number '</span><span class="si">$orderNumber</span><span class="s">'."</span><span class="p">),</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kt">String</span> <span class="nf">makeHamburger</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="s">"Hamburger"</span><span class="p">;</span>
+<span class="kt">String</span> <span class="nf">makePasta</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="s">"Pasta"</span><span class="p">;</span>
 </pre></td></tr></tbody></table></code></pre></div></div>
-
-<h3 id="lists-work-too">Lists Work Too</h3>
-
+<p>There are several issues with this program:</p>
 <ul>
-  <li>Point one</li>
-  <li>Point two</li>
-  <li>Point three</li>
+  <li>If we forget to catch in the correct spot, we just introduced a bug or worse - crashed our entire program.</li>
+  <li>We may later reuse <code class="language-plaintext highlighter-rouge">makeFood</code> or <code class="language-plaintext highlighter-rouge">order</code>, and forget that it can throw.</li>
+  <li>The more we reuse functions that can throw, the less maintainable and error-prone our program becomes.</li>
+  <li>Throwing is also an expensive operation, as it requires stack unwinding.</li>
 </ul>
 
-<p>That’s it! This post will now appear on your site with the specified categories and tags.</p>]]></content><author><name>Your Name</name></author><category term="tutorial" /><category term="jekyll" /><category term="beginner" /><category term="web-development" /><category term="static-sites" /><category term="blogging" /><summary type="html"><![CDATA[Welcome to My First Post!]]></summary></entry></feed>
+<h3 id="result-type">Result Type</h3>
+<p>Throughout the rest of this article we will be looking at the <code class="language-plaintext highlighter-rouge">Result</code> type in Dart as provided by the <a href="https://pub.dev/packages/rust_core">rust_core</a>
+package.</p>
+
+<p>Here is the previous example implemented with <code class="language-plaintext highlighter-rouge">Result</code>:</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre></td><td class="rouge-code"><pre><span class="kn">import</span> <span class="s">'package:rust_core/result.dart'</span><span class="o">;</span>
+
+<span class="kt">void</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">print</span><span class="p">(</span><span class="n">order</span><span class="p">(</span><span class="s">"Bob"</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">Result</span><span class="p">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="n">Exception</span><span class="p">&gt;</span> <span class="n">order</span><span class="p">(</span><span class="kt">String</span> <span class="n">user</span><span class="p">,</span> <span class="kt">int</span> <span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">final</span> <span class="n">result</span> <span class="o">=</span> <span class="n">makeFood</span><span class="p">(</span><span class="n">orderNumber</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">result</span> <span class="k">case</span> <span class="n">Ok</span><span class="p">(</span><span class="o">:</span><span class="kd">final</span> <span class="n">ok</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// Could also use "if(result.isOk())" or a switch statement</span>
+    <span class="k">return</span> <span class="n">Ok</span><span class="p">(</span><span class="s">"Order of </span><span class="si">$ok</span><span class="s"> is complete for </span><span class="si">$user</span><span class="s">"</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Result</span><span class="p">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="n">Exception</span><span class="p">&gt;</span> <span class="n">makeFood</span><span class="p">(</span><span class="kt">int</span> <span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">switch</span><span class="p">(</span><span class="n">orderNumber</span><span class="p">)</span> <span class="p">{</span>
+    <span class="mi">1</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Ok</span><span class="p">(</span><span class="n">makeHamburger</span><span class="p">()),</span>
+    <span class="mi">2</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Ok</span><span class="p">(</span><span class="n">makePasta</span><span class="p">()),</span>
+    <span class="n">_</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Err</span><span class="p">(</span><span class="n">Exception</span><span class="p">(</span><span class="s">"Unknown order number '</span><span class="si">$orderNumber</span><span class="s">'."</span><span class="p">)),</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="kt">String</span> <span class="nf">makeHamburger</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="s">"Hamburger"</span><span class="p">;</span>
+<span class="kt">String</span> <span class="nf">makePasta</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="s">"Pasta"</span><span class="p">;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>By using <code class="language-plaintext highlighter-rouge">Result</code>, we have removed all undefined behaviors due to control flow! Thus eliminating
+all previously mentioned issues.</p>
+
+<p>You can interact with <code class="language-plaintext highlighter-rouge">Result</code> through conventions like
+<code class="language-plaintext highlighter-rouge">case Ok(:final ok)</code> and <code class="language-plaintext highlighter-rouge">isOk()</code>, or methods like <code class="language-plaintext highlighter-rouge">.map(..)</code>, .<code class="language-plaintext highlighter-rouge">andThen(..)</code>, etc. Checking allows you to
+either resolve any potential issues in the calling function or pass the error up the chain until a function resolves
+the issue. This provides predictable control flow to your program, eliminating many potential bugs and countless
+hours of debugging.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In conclusion, adopting the <code class="language-plaintext highlighter-rouge">Result</code> type for error handling in Dart brings numerous benefits, especially in creating
+predictable and maintainable control flows. Unlike traditional try-catch mechanisms, <code class="language-plaintext highlighter-rouge">Result</code> ensures that error
+handling is explicit and unavoidable. Thus preventing potential bugs and improving code reliability.
+The <a href="https://pub.dev/packages/rust_core">rust_core</a> package’s implementation
+of <code class="language-plaintext highlighter-rouge">Result</code> in Dart provides a powerful tool for managing errors effectively, 
+aligning Dart’s error handling capabilities with those of more modern and robust systems like Rust.
+Embracing this approach will not only enhance the stability of Dart applications but also streamline the 
+development process, making it easier to maintain and debug code in the long run.</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="dart" /><summary type="html"><![CDATA[The Result Type In Dart]]></summary></entry><entry><title type="html">Package Highlight - `dart_mappable`</title><link href="http://localhost:4000/technical/2024/06/28/package-highlight-dart-mappable.html" rel="alternate" type="text/html" title="Package Highlight - `dart_mappable`" /><published>2024-06-28T00:00:00+00:00</published><updated>2024-06-28T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/06/28/package-highlight-dart-mappable</id><content type="html" xml:base="http://localhost:4000/technical/2024/06/28/package-highlight-dart-mappable.html"><![CDATA[<h1 id="package-highlight-dart_mappable">Package Highlight: <code class="language-plaintext highlighter-rouge">dart_mappable</code></h1>
+
+<p><a href="https://pub.dev/packages/dart_mappable">https://pub.dev/packages/dart_mappable</a></p>
+
+<p>Many developers are familiar with the <a href="https://pub.dev/packages/freezed">freezed</a> package, but fewer have heard of <a href="https://pub.dev/packages/dart_mappable">dart_mappable</a>. Both packages aim to bring <a href="https://kotlinlang.org/docs/data-classes.html">data classes</a> to Dart, but <code class="language-plaintext highlighter-rouge">dart_mappable</code> makes a few tradeoffs to offer significant benefits in return.</p>
+
+<p>From the documentation:</p>
+<blockquote>
+  <p>dart_mappable covers all basic features (from/to json, == override, hashCode, toString(), copyWith) while adding new or improved support for advanced use-cases including generics, inheritance and polymorphism, customization, and more.</p>
+</blockquote>
+
+<p>Additionally, it requires far less boilerplate. Let’s see it in action:</p>
+
+<p><strong><em>dart_mappable</em></strong></p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="kn">part</span> <span class="s">'model.mapper.dart'</span><span class="o">;</span>
+
+<span class="nd">@MappableClass</span><span class="p">()</span>
+<span class="kd">class</span> <span class="nc">MyClass</span> <span class="k">with</span> <span class="n">MyClassMappable</span> <span class="p">{</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">myValue</span><span class="p">;</span>
+
+  <span class="n">MyClass</span><span class="p">({</span><span class="kd">required</span> <span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">});</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>vs</p>
+
+<p><strong><em>freezed</em></strong></p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre><span class="kn">part</span> <span class="s">'model.freezed.dart'</span><span class="o">;</span>
+<span class="kn">part</span> <span class="s">'model.g.dart'</span><span class="o">;</span>
+
+<span class="nd">@freezed</span>
+<span class="kd">class</span> <span class="nc">MyClass</span> <span class="k">with</span> <span class="n">_$MyClass</span> <span class="p">{</span>
+  <span class="nd">@JsonSerializable</span><span class="p">(</span><span class="nl">explicitToJson:</span> <span class="kc">true</span><span class="p">)</span>
+  <span class="kd">factory</span> <span class="n">DocumentInfoLocalData</span><span class="p">({</span>
+    <span class="kd">required</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">myValue</span><span class="p">,</span>
+  <span class="p">})</span> <span class="o">=</span> <span class="n">_MyClass</span><span class="p">;</span>
+
+  <span class="kd">factory</span> <span class="n">MyClass</span><span class="o">.</span><span class="na">fromJson</span><span class="p">(</span><span class="kt">Map</span><span class="p">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kd">dynamic</span><span class="p">&gt;</span> <span class="n">json</span><span class="p">)</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">_$MyClassFromJson</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h2 id="benefits">Benefits</h2>
+<h3 id="boilerplate">Boilerplate</h3>
+<p>With <code class="language-plaintext highlighter-rouge">dart_mappable</code> the code is a lot more concise and forgiving to Dart developers. It’s difficult to make a syntactic error with <code class="language-plaintext highlighter-rouge">dart_mappable</code> - just add <code class="language-plaintext highlighter-rouge">@MappableClass()</code> and <code class="language-plaintext highlighter-rouge">with &lt;class_name&gt;Mappable</code>. While with <code class="language-plaintext highlighter-rouge">freezed</code>, it is pretty easy to mess up all the syntactic nuances <code class="language-plaintext highlighter-rouge">required final ..</code>, <code class="language-plaintext highlighter-rouge">@Default(...) final ..</code>, <code class="language-plaintext highlighter-rouge">_$</code>, <code class="language-plaintext highlighter-rouge">_</code>, <code class="language-plaintext highlighter-rouge">_$..FromJson</code>, <code class="language-plaintext highlighter-rouge">@JsonSerializable(explicitToJson: true)</code>, <code class="language-plaintext highlighter-rouge">factory</code>, etc. With <code class="language-plaintext highlighter-rouge">dart_mappable</code> you just write dart code and it takes care of the rest.</p>
+<h3 id="custom-constructors-and-flexibility">Custom Constructors and Flexibility</h3>
+<p>Conciseness is great, but functionality is also important. With <code class="language-plaintext highlighter-rouge">dart_mappable</code>, you are not restricted to a <code class="language-plaintext highlighter-rouge">freezed</code>-like constructor; you can use any Dart constructor you prefer:</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="n">MyClass</span><span class="p">(</span><span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nf">MyClass</span><span class="p">(</span><span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">);</span>
+<span class="n">MyClass</span><span class="p">(</span><span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="o">.</span><span class="na">otherValue</span> <span class="o">=</span> <span class="mi">1</span><span class="p">]);</span>
+<span class="n">MyClass</span><span class="p">(</span><span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">,</span> <span class="p">{</span><span class="k">this</span><span class="o">.</span><span class="na">otherValue</span><span class="p">})</span><span class="o">:</span> <span class="k">assert</span><span class="p">(</span><span class="n">myValue</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">// not `@Assert('...')` needed</span>
+<span class="n">MyClass</span><span class="p">(</span><span class="k">this</span><span class="o">.</span><span class="na">myValue</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">date</span> <span class="o">=</span> <span class="n">DateTime</span><span class="o">.</span><span class="na">now</span><span class="p">();</span> <span class="c1">// Non-const default values :)</span>
+    <span class="c1">// other logic</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="generics-and-inheritance">Generics and Inheritance</h3>
+<p>Dealing with generics is easy, since only regular dart code is needed, there’s no need to use additional annotations like <code class="language-plaintext highlighter-rouge">@With</code> or <code class="language-plaintext highlighter-rouge">@Implements</code>.</p>
+<h2 id="drawbacks">Drawbacks</h2>
+<p>Since you do not declare a <code class="language-plaintext highlighter-rouge">fromJson</code> constructor with <code class="language-plaintext highlighter-rouge">dart_mappable</code> it generates one for you, following the <code class="language-plaintext highlighter-rouge">&lt;class_name&gt;Mapper</code>
+convention.</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="n">MyClassMapper</span><span class="o">.</span><span class="na">fromJson</span><span class="p">(</span><span class="n">json</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>This is really a style preference since with <code class="language-plaintext highlighter-rouge">freezed</code> you have to reference the class anyways (<code class="language-plaintext highlighter-rouge">MyClass.fromJson(json)</code>).
+This may become more useful if the lanugage team ever decides to support <a href="https://github.com/dart-lang/language/issues/356">abstract static methods</a>.</p>
+
+<p>Another difference that some may consider a benefit or drawback is <code class="language-plaintext highlighter-rouge">freezed</code> tries to force immutability (unless you use <code class="language-plaintext highlighter-rouge">@unfreezed</code>).
+While <code class="language-plaintext highlighter-rouge">dart_mapper</code> leaves that it up to the user. Personally I always lean towards more power to the developer.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>At the end of the day, <code class="language-plaintext highlighter-rouge">dart_mappable</code> gives Dart developers all the capabilities they usually choose <code class="language-plaintext highlighter-rouge">freezed</code> for, without getting in their way.</p>
+
+<p>Looking ahead, both of these approaches might become obsolete when <a href="https://github.com/dart-lang/language/issues/1482">static metaprogramming</a> lands in early 2025.</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="dart" /><summary type="html"><![CDATA[Package Highlight: dart_mappable]]></summary></entry><entry><title type="html">Introducing `indices`</title><link href="http://localhost:4000/technical/2024/04/22/introducing-indices.html" rel="alternate" type="text/html" title="Introducing `indices`" /><published>2024-04-22T00:00:00+00:00</published><updated>2024-04-22T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/04/22/introducing-indices</id><content type="html" xml:base="http://localhost:4000/technical/2024/04/22/introducing-indices.html"><![CDATA[<h1 id="introducing-indices-macros-and-methods-for-safely-retrieving-multiple-mutable-indices-of-a-mutable-slice">Introducing indices: Macros and Methods For Safely Retrieving Multiple Mutable Indices Of A Mutable Slice</h1>
+
+<p>Github: <a href="https://github.com/mcmah309/indices">https://github.com/mcmah309/indices</a></p>
+
+<p>indices is a crate with zero allocation macros and methods for retrieving multiple mutable indices from a mutable slice safely.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre><span class="k">let</span> <span class="p">(</span><span class="n">two</span><span class="p">,</span> <span class="n">four</span><span class="p">)</span> <span class="o">=</span> <span class="nd">indices!</span><span class="p">(</span><span class="n">slice</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Getting multiple mutable indices can be tricky due to the language’s strict borrowing rules.
+previously if you wanted to get multiple multiple indices of a slice you could use <code class="language-plaintext highlighter-rouge">split_at_mut</code></p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre><span class="k">let</span> <span class="k">mut</span> <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+<span class="k">let</span> <span class="n">index1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">index2</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="k">let</span> <span class="p">(</span><span class="n">first_part</span><span class="p">,</span> <span class="n">second_part</span><span class="p">)</span> <span class="o">=</span> <span class="n">data</span><span class="nf">.split_at_mut</span><span class="p">(</span><span class="n">index1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+<span class="k">let</span> <span class="n">len</span> <span class="o">=</span> <span class="n">first_part</span><span class="nf">.len</span><span class="p">();</span>
+<span class="k">let</span> <span class="n">two</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">first_part</span><span class="p">[</span><span class="n">len</span> <span class="o">-</span> <span class="mi">1</span><span class="p">];</span>
+<span class="k">let</span> <span class="p">(</span><span class="n">_first_part</span><span class="p">,</span> <span class="n">second_part2</span><span class="p">)</span> <span class="o">=</span> <span class="n">second_part</span><span class="nf">.split_at_mut</span><span class="p">(</span><span class="n">index2</span> <span class="o">-</span> <span class="n">len</span><span class="p">);</span>
+<span class="k">let</span> <span class="n">four</span> <span class="o">=</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">second_part2</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">two</span><span class="p">);</span> <span class="c1">// 3</span>
+<span class="nd">println!</span><span class="p">(</span><span class="s">"{}"</span><span class="p">,</span> <span class="n">four</span><span class="p">);</span> <span class="c1">// 5</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>Although slightly more verbose, this is fine until there is more than the index and values are only known at runtime (especially if ordering may also be unknown).</p>
+
+<h2 id="macros">Macros</h2>
+<p>All macros are zero allocation and allow retrieving a variable number of indices at runtime. Prefer macros when the number
+of indices are known at compile time.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+</pre></td><td class="rouge-code"><pre><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">Person</span> <span class="p">{</span>
+        <span class="n">first</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+        <span class="n">last</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Person</span> <span class="p">{</span> <span class="n">first</span><span class="p">:</span> <span class="s">"John"</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">last</span><span class="p">:</span> <span class="s">"Doe"</span><span class="nf">.to_string</span><span class="p">()</span> <span class="p">},</span>
+        <span class="n">Person</span> <span class="p">{</span> <span class="n">first</span><span class="p">:</span> <span class="s">"Jane"</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">last</span><span class="p">:</span> <span class="s">"Smith"</span><span class="nf">.to_string</span><span class="p">()</span> <span class="p">},</span>
+        <span class="n">Person</span> <span class="p">{</span> <span class="n">first</span><span class="p">:</span> <span class="s">"Alice"</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">last</span><span class="p">:</span> <span class="s">"Johnson"</span><span class="nf">.to_string</span><span class="p">()</span> <span class="p">},</span>
+        <span class="n">Person</span> <span class="p">{</span> <span class="n">first</span><span class="p">:</span> <span class="s">"Bob"</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">last</span><span class="p">:</span> <span class="s">"Brown"</span><span class="nf">.to_string</span><span class="p">()</span> <span class="p">},</span>
+        <span class="n">Person</span> <span class="p">{</span> <span class="n">first</span><span class="p">:</span> <span class="s">"Charlie"</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">last</span><span class="p">:</span> <span class="s">"White"</span><span class="nf">.to_string</span><span class="p">()</span> <span class="p">},</span>
+    <span class="p">];</span>
+    <span class="k">fn</span> <span class="nf">modify</span><span class="p">(</span><span class="n">data_slice</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="p">[</span><span class="n">Person</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">){</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">four</span><span class="p">,</span> <span class="n">func_provided</span><span class="p">,</span> <span class="n">three</span><span class="p">)</span> <span class="o">=</span> <span class="nd">indices!</span><span class="p">(</span><span class="n">data_slice</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+        <span class="n">four</span><span class="py">.last</span> <span class="o">=</span> <span class="s">"Black"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="n">func_provided</span><span class="py">.first</span> <span class="o">=</span> <span class="s">"Jack"</span><span class="nf">.to_string</span><span class="p">();</span>
+        <span class="n">three</span><span class="py">.last</span> <span class="o">=</span> <span class="s">"Jones"</span><span class="nf">.to_string</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">let</span> <span class="n">slice</span> <span class="o">=</span> <span class="n">data</span><span class="nf">.as_mut_slice</span><span class="p">();</span>
+    <span class="nf">modify</span><span class="p">(</span><span class="n">slice</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="py">.last</span><span class="p">,</span> <span class="s">"Black"</span><span class="p">);</span>
+    <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="py">.first</span><span class="p">,</span> <span class="s">"Jack"</span><span class="p">);</span>
+    <span class="nd">assert_eq!</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="py">.last</span><span class="p">,</span> <span class="s">"Jones"</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h2 id="methods">Methods</h2>
+<p>Methods allow for more dynamic runtime retrieval when the number of indices is unknown at compile time. e.g.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+</pre></td><td class="rouge-code"><pre><span class="k">fn</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">struct</span> <span class="n">Node</span> <span class="p">{</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+        <span class="n">visted</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span>
+        <span class="n">edges</span><span class="p">:</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">usize</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="k">mut</span> <span class="n">graph</span> <span class="o">=</span> <span class="nd">vec!</span><span class="p">[</span>
+        <span class="n">Node</span> <span class="p">{</span>
+            <span class="n">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">visted</span><span class="p">:</span> <span class="nn">usize</span><span class="p">::</span><span class="n">MAX</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">message</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">Node</span> <span class="p">{</span>
+            <span class="n">index</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">visted</span><span class="p">:</span> <span class="nn">usize</span><span class="p">::</span><span class="n">MAX</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+            <span class="n">message</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">Node</span> <span class="p">{</span>
+            <span class="n">index</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">visted</span><span class="p">:</span> <span class="nn">usize</span><span class="p">::</span><span class="n">MAX</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+            <span class="n">message</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+        <span class="p">},</span>
+        <span class="n">Node</span> <span class="p">{</span>
+            <span class="n">index</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">visted</span><span class="p">:</span> <span class="nn">usize</span><span class="p">::</span><span class="n">MAX</span><span class="p">,</span>
+            <span class="n">edges</span><span class="p">:</span> <span class="nd">vec!</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">message</span><span class="p">:</span> <span class="nn">String</span><span class="p">::</span><span class="nf">new</span><span class="p">(),</span>
+        <span class="p">},</span>
+    <span class="p">];</span>
+
+    <span class="k">fn</span> <span class="nf">traverse_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="p">[</span><span class="n">Node</span><span class="p">],</span> <span class="n">current</span><span class="p">:</span> <span class="nb">usize</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="nb">bool</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="o">==</span> <span class="n">start</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">let</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">graph</span><span class="p">[</span><span class="n">current</span><span class="p">]</span><span class="py">.edges</span><span class="nf">.clone</span><span class="p">();</span>
+        <span class="k">let</span> <span class="p">[</span><span class="k">mut</span> <span class="n">current_node</span><span class="p">,</span> <span class="k">mut</span> <span class="n">edge_nodes</span><span class="p">]</span> <span class="o">=</span> <span class="nf">indices_slices</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">[</span><span class="n">current</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">edges</span><span class="p">]);</span>
+        <span class="k">for</span> <span class="n">edge_node</span> <span class="k">in</span> <span class="n">edge_nodes</span><span class="nf">.iter_mut</span><span class="p">()</span> <span class="p">{</span>
+            <span class="n">current_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="py">.visted</span> <span class="o">=</span> <span class="n">current</span><span class="p">;</span>
+            <span class="n">edge_node</span><span class="py">.message</span><span class="nf">.push_str</span><span class="p">(</span><span class="o">&amp;</span><span class="nd">format!</span><span class="p">(</span>
+                <span class="s">"This is Node `{}` Came from Node `{}`."</span><span class="p">,</span>
+                <span class="n">edge_node</span><span class="py">.index</span><span class="p">,</span> <span class="n">current_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="py">.visted</span>
+            <span class="p">));</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">edge</span> <span class="k">in</span> <span class="n">edges</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="nf">traverse_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">edge</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nf">traverse_graph</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="o">*</span><span class="n">graph</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="k">let</span> <span class="n">answers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">"This is Node `0` Came from Node `1`."</span><span class="p">,</span>
+        <span class="s">"This is Node `1` Came from Node `3`."</span><span class="p">,</span>
+        <span class="s">"This is Node `2` Came from Node `1`."</span><span class="p">,</span>
+        <span class="s">"This is Node `4` Came from Node `2`."</span><span class="p">,</span>
+    <span class="p">];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="k">in</span> <span class="n">graph</span><span class="nf">.iter</span><span class="p">()</span><span class="nf">.enumerate</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nd">assert_eq!</span><span class="p">(</span><span class="o">&amp;</span><span class="n">node</span><span class="py">.message</span><span class="p">,</span> <span class="n">answers</span><span class="p">[</span><span class="n">index</span><span class="p">]);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Enjoy!</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="rust" /><summary type="html"><![CDATA[Introducing indices: Macros and Methods For Safely Retrieving Multiple Mutable Indices Of A Mutable Slice]]></summary></entry><entry><title type="html">Introducing `error_set`</title><link href="http://localhost:4000/technical/2024/04/08/introducing-error-set.html" rel="alternate" type="text/html" title="Introducing `error_set`" /><published>2024-04-08T00:00:00+00:00</published><updated>2024-04-08T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/04/08/introducing-error-set</id><content type="html" xml:base="http://localhost:4000/technical/2024/04/08/introducing-error-set.html"><![CDATA[<h1 id="introducing-error_set-a-zig-inspired-approach-to-error-handling-in-rust">Introducing <code class="language-plaintext highlighter-rouge">error_set</code>: A Zig-Inspired Approach to Error Handling in Rust</h1>
+
+<p>Github: <a href="https://github.com/mcmah309/error_set">https://github.com/mcmah309/error_set</a></p>
+
+<p>Following a recent discussion on reimagining Rust, many voiced the need for more terse error handling. While <code class="language-plaintext highlighter-rouge">anyhow</code> and <code class="language-plaintext highlighter-rouge">thiserror</code> serve their purposes, each comes with its trade-offs. This got me thinking: Is there a middle ground that combines flexibility with precision?</p>
+
+<p>Enter <a href="https://github.com/mcmah309/error_set">error_set</a> a concept derived from <a href="https://ziglang.org/documentation/master/#Error-Set-Type">Zig</a> that elegantly balances the definition of possible errors within a given scope while remaining succinct and developer-friendly.</p>
+
+<p>Here’s a sneak peek of how it looks:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="nd">error_set!</span> <span class="p">{</span>
+    <span class="n">MediaError</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nf">IoError</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="n">Error</span><span class="p">)</span>
+    <span class="p">}</span> <span class="p">||</span> <span class="n">BookParsingError</span> <span class="p">||</span> <span class="n">DownloadError</span> <span class="p">||</span> <span class="n">ParseUploadError</span><span class="p">;</span>
+    <span class="n">BookParsingError</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">MissingBookDescription</span><span class="p">,</span>
+        <span class="nf">CouldNotReadBook</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="n">Error</span><span class="p">),</span>
+    <span class="p">}</span> <span class="p">||</span> <span class="n">BookSectionParsingError</span><span class="p">;</span>
+    <span class="n">BookSectionParsingError</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">MissingName</span><span class="p">,</span>
+        <span class="n">NoContents</span><span class="p">,</span>
+    <span class="p">};</span>
+    <span class="n">DownloadError</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">InvalidUrl</span><span class="p">,</span>
+        <span class="nf">CouldNotSaveBook</span><span class="p">(</span><span class="nn">std</span><span class="p">::</span><span class="nn">io</span><span class="p">::</span><span class="n">Error</span><span class="p">),</span>
+    <span class="p">};</span>
+    <span class="n">ParseUploadError</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">MaximumUploadSizeReached</span><span class="p">,</span>
+        <span class="n">TimedOut</span><span class="p">,</span>
+        <span class="n">AuthenticationFailed</span><span class="p">,</span>
+    <span class="p">};</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>With <code class="language-plaintext highlighter-rouge">error_set</code>, we no longer need “god enums” that are used in scopes where some variants can never happen. Instead we can tersely define the errors in scope and coerce them into a superset if propagated up the call stack.</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="rust" /><summary type="html"><![CDATA[Introducing error_set: A Zig-Inspired Approach to Error Handling in Rust]]></summary></entry><entry><title type="html">`rust_core` 0.4 Release and Project Update</title><link href="http://localhost:4000/technical/2024/03/03/rust-core-0-4-0.html" rel="alternate" type="text/html" title="`rust_core` 0.4 Release and Project Update" /><published>2024-03-03T00:00:00+00:00</published><updated>2024-03-03T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/03/03/rust-core-0-4-0</id><content type="html" xml:base="http://localhost:4000/technical/2024/03/03/rust-core-0-4-0.html"><![CDATA[<h1 id="rust_core-04-release-and-project-update">rust_core 0.4 Release and Project Update</h1>
+
+<p>github: <a href="https://github.com/mcmah309/rust_core">https://github.com/mcmah309/rust_core</a>
+pub: <a href="https://pub.dev/packages/rust_core">https://pub.dev/packages/rust_core</a></p>
+
+<h2 id="background">Background</h2>
+<p><a href="https://github.com/mcmah309/rust_core">rust_core</a> is an implementation of the Rust’s core library in Dart. The goal is to bring Rust’s features and ergonomics to
+Dart. This also provides a seamless developer experience for any developer using both languages.</p>
+
+<h2 id="04">0.4</h2>
+<h3 id="option">Option</h3>
+<p>A lot of possibilities opened up with Dart 3.3.0 release. Zero cost abstraction with extension types is a powerful tool. Thus, we migrated
+the <code class="language-plaintext highlighter-rouge">Option</code> class to an extension type. Since exclusive nullable type extensions are not possible, <code class="language-plaintext highlighter-rouge">Option</code> fills this gap
+with zero allocation runtime cost and chaining null aware operations.</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>    <span class="n">Option</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">intOptionFunc</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="kd">const</span> <span class="n">None</span><span class="p">();</span>
+    <span class="kt">double</span> <span class="n">halfVal</span><span class="p">(</span><span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">val</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">Option</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;</span> <span class="n">val</span> <span class="o">=</span> <span class="n">intOptionFunc</span><span class="p">()</span><span class="o">.</span><span class="na">map</span><span class="p">(</span><span class="n">halfVal</span><span class="p">);</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="na">unwrapOr</span><span class="p">(</span><span class="mf">2.0</span><span class="p">),</span> <span class="mf">2.0</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>Considering <code class="language-plaintext highlighter-rouge">Option</code> also supports early return key notation.</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>    <span class="n">Option</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">intNone</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="kd">const</span> <span class="n">None</span><span class="p">();</span>
+    <span class="n">Option</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">&gt;</span> <span class="n">earlyReturn</span><span class="p">(</span><span class="kt">int</span> <span class="n">val</span><span class="p">)</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Option</span><span class="p">((</span><span class="err">$</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Early Return Key</span>
+      <span class="c1">// Returns here, no need to do a `if null return`</span>
+      <span class="kt">double</span> <span class="n">x</span> <span class="o">=</span> <span class="n">intNone</span><span class="p">()[</span><span class="err">$</span><span class="p">]</span><span class="o">.</span><span class="na">toDouble</span><span class="p">();</span>
+      <span class="k">return</span> <span class="n">Some</span><span class="p">(</span><span class="n">val</span> <span class="o">+</span> <span class="n">x</span><span class="p">);</span>
+    <span class="p">});</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">earlyReturn</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="kd">const</span> <span class="n">None</span><span class="p">());</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>And transitioning between is ergonomic</p>
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>    <span class="n">Option</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">&gt;</span> <span class="n">option</span> <span class="o">=</span> <span class="n">intNone</span><span class="p">();</span>
+    <span class="kt">int</span><span class="o">?</span> <span class="n">nullable</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="na">v</span><span class="p">;</span>
+    <span class="n">nullable</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="na">toNullable</span><span class="p">();</span> <span class="c1">// or</span>
+    <span class="n">option</span> <span class="o">=</span> <span class="n">nullable</span><span class="o">.</span><span class="na">toOption</span><span class="p">();</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p><code class="language-plaintext highlighter-rouge">Option</code> seems like the go to when compared to using nullable directly when developing api’s or a least a solid companion.</p>
+
+<h3 id="slice-and-iter">Slice and Iter</h3>
+<p>Included in <code class="language-plaintext highlighter-rouge">0.4</code> are two new libraries <code class="language-plaintext highlighter-rouge">slice</code> and <code class="language-plaintext highlighter-rouge">iter</code> being developed but with the usual full test coverage guarantee of rust_core.</p>
+
+<p>A <code class="language-plaintext highlighter-rouge">Slice</code> is a contiguous sequence of elements in a [List]. Slices are a view into a list without allocating and copying to a new list,
+thus slices are more efficient than creating a sublist, but they do not own their own data. That means shrinking the original list can cause the slice’s range to become invalid, which may cause an exception.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Slice</code> also have a lot of efficient methods for in-place mutation within and between slices. e.g.</p>
+
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>    <span class="kd">var</span> <span class="n">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="n">slice</span> <span class="o">=</span> <span class="n">Slice</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">slice</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]);</span>
+    <span class="kd">var</span> <span class="n">taken</span> <span class="o">=</span> <span class="n">slice</span><span class="o">.</span><span class="na">takeLast</span><span class="p">();</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">taken</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">slice</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]);</span>
+    <span class="n">slice</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">list</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>A Dart <code class="language-plaintext highlighter-rouge">Iterable</code> is analogous to a Rust <code class="language-plaintext highlighter-rouge">Iterator</code>. Since Dart already has an <code class="language-plaintext highlighter-rouge">Iterator</code> class, to avoid confusion,
+the Dart implementation of the Rust iterator is <code class="language-plaintext highlighter-rouge">RIterator</code>. <code class="language-plaintext highlighter-rouge">RIterator</code> is a zero cost extension type of <code class="language-plaintext highlighter-rouge">Iterable</code>. <code class="language-plaintext highlighter-rouge">RIterator</code>
+makes working with collections of <code class="language-plaintext highlighter-rouge">rust_core</code> types and regular Dart types a breeze. e.g.</p>
+
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre>    <span class="kd">var</span> <span class="n">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">];</span>
+    <span class="kd">var</span> <span class="n">filtered</span> <span class="o">=</span> <span class="n">list</span><span class="o">.</span><span class="na">iter</span><span class="p">()</span><span class="o">.</span><span class="na">filterMap</span><span class="p">((</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">e</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Some</span><span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="n">None</span><span class="p">();</span>
+    <span class="p">});</span>
+    <span class="n">expect</span><span class="p">(</span><span class="n">filtered</span><span class="p">,</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="misc">Misc</h3>
+<p>Various additional extension methods were added.</p>
+
+<h2 id="future">Future</h2>
+<p>rust_core for being in pre-release is stable with about 400 tests and currently used in major applications under development internally. <code class="language-plaintext highlighter-rouge">0.4</code> May be the last
+minor release before <code class="language-plaintext highlighter-rouge">1.0.0</code> but there also may be a <code class="language-plaintext highlighter-rouge">0.5.0</code> release.</p>
+
+<p>Two new packages are under development [rewind] and <a href="https://github.com/mcmah309/rust_std">rust_std</a>.</p>
+<ul>
+  <li><a href="https://github.com/mcmah309/rewind">rewind</a> Log exactly what you want, while being aware of [anyhow] types.</li>
+  <li><a href="https://github.com/mcmah309/rust_std">rust_std</a> An implementation of Rust’s standard library in Dart.</li>
+</ul>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="dart" /><category term="rust" /><summary type="html"><![CDATA[rust_core 0.4 Release and Project Update]]></summary></entry><entry><title type="html">Announcing `activate`</title><link href="http://localhost:4000/technical/2024/02/10/announcing-activate.html" rel="alternate" type="text/html" title="Announcing `activate`" /><published>2024-02-10T00:00:00+00:00</published><updated>2024-02-10T00:00:00+00:00</updated><id>http://localhost:4000/technical/2024/02/10/announcing-activate</id><content type="html" xml:base="http://localhost:4000/technical/2024/02/10/announcing-activate.html"><![CDATA[<h1 id="announcing-activate-a-sane-way-to-manage-environment-configuration">Announcing <code class="language-plaintext highlighter-rouge">activate</code>: A sane way to manage environment configuration</h1>
+
+<p>Recently I got sick of the way I had different imperative ways of managing environments across language domains and having to re-configure things locally to replicate QA bugs, plus the hassle of working in a monorepo. I am also a big fan of tools like <code class="language-plaintext highlighter-rouge">direnv</code> and that inspired me to create <a href="https://github.com/mcmah309/activate?tab=readme-ov-file">activate</a>.</p>
+
+<p>Activate allows you to switch an entire repo/monorepo between environments and reload environment changes with a single command.</p>
+
+<h2 id="example-use-cases">Example Use Cases</h2>
+
+<ol>
+  <li>You have assets, data files, executables, or program files that should be used in different environments like Dev, QA, etc. e.g.
+    <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre> <span class="nn">[dev.links]</span>
+ <span class="py">"app/data"</span> <span class="p">=</span> <span class="s">"path/to/dev/data"</span>
+
+ <span class="nn">[qa.links]</span>
+ <span class="py">"app/data"</span> <span class="p">=</span> <span class="s">"path/to/qa/data"</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p><code class="language-plaintext highlighter-rouge">app/data</code> is created and symlinked to the file or directory of the active environment.</p>
+  </li>
+  <li>You want different environment variables in each environment e.g.
+    <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre> <span class="nn">[dev.env]</span>
+ <span class="py">HOST</span> <span class="p">=</span> <span class="s">"localhost"</span>
+ <span class="py">PORT</span> <span class="p">=</span> <span class="mi">3000</span>
+
+ <span class="nn">[qa.env]</span>
+ <span class="py">HOST</span> <span class="p">=</span> <span class="s">"178.32.44.2"</span>
+ <span class="py">PORT</span> <span class="p">=</span> <span class="mi">443</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>To load into your current shell run (this will also unload any activate environment).</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>activate <span class="nt">-e</span> &lt;name&gt;<span class="si">)</span><span class="s2">"</span><span class="sb">`</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>Alternatively you can load the active <code class="language-plaintext highlighter-rouge">.env</code> file yourself or from an application, located at <code class="language-plaintext highlighter-rouge">.activate/.env</code>.
+ This can also be useful for dev containers. Just add <code class="language-plaintext highlighter-rouge">"runArgs": ["--env-file",".activate/.env"]</code> to your
+ <code class="language-plaintext highlighter-rouge">.devcontainer/devcontainer.json</code> file.</p>
+  </li>
+  <li>You are using a mono-repo and want to switch everything to a certain environment. Run:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> activate <span class="nt">-r</span> &lt;name&gt;
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>any directory/subdirecory (respecting <code class="language-plaintext highlighter-rouge">.gitignore</code>) with an <code class="language-plaintext highlighter-rouge">activate.toml</code> file is switched to <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code></p>
+  </li>
+</ol>
+
+<p>I hope this helps you too, more to come :)</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="rust" /><summary type="html"><![CDATA[Announcing activate: A sane way to manage environment configuration]]></summary></entry><entry><title type="html">Announcing `rust_core`</title><link href="http://localhost:4000/technical/2023/12/11/announcing-rust-core.html" rel="alternate" type="text/html" title="Announcing `rust_core`" /><published>2023-12-11T00:00:00+00:00</published><updated>2023-12-11T00:00:00+00:00</updated><id>http://localhost:4000/technical/2023/12/11/announcing-rust-core</id><content type="html" xml:base="http://localhost:4000/technical/2023/12/11/announcing-rust-core.html"><![CDATA[<h1 id="announcing-rust-core-in-dart-program-in-dart-like-you-would-in-rust">Announcing Rust Core in Dart: Program in Dart Like You Would in Rust</h1>
+
+<p>For Rust developers involved in programming with Dart, or Dart developers interested in idiomatic and safe programming, we have developed “rust_core,” a package designed to implement Rust’s core library in Dart. <code class="language-plaintext highlighter-rouge">Result</code>, <code class="language-plaintext highlighter-rouge">Option</code>, <code class="language-plaintext highlighter-rouge">Cell</code>, <code class="language-plaintext highlighter-rouge">OnceCell</code>, <code class="language-plaintext highlighter-rouge">LazyCell</code>, etc. Are all done, along with nearly 200 extension methods for different scenarios, such as <code class="language-plaintext highlighter-rouge">Future&lt;Result&lt;S,F&gt;&gt;</code>, <code class="language-plaintext highlighter-rouge">Result&lt;Option&lt;S&gt;,F&gt;</code>, <code class="language-plaintext highlighter-rouge">Result&lt;S?,F&gt;</code>, etc. just to name a few.</p>
+
+<p>Pub: <a href="https://pub.dev/packages/rust_core">https://pub.dev/packages/rust_core</a></p>
+
+<p>Github: <a href="https://github.com/mcmah309/rust_core">https://github.com/mcmah309/rust_core</a></p>
+
+<p>A link you might also be interest in <a href="https://mcmah309.github.io/rust_core/introduction/quickstart.html#the-rust--operator-and-early-return-key-notion">Dart Equivalent To The Rust “?” Early Return Operator</a></p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="dart" /><category term="rust" /><summary type="html"><![CDATA[Announcing Rust Core in Dart: Program in Dart Like You Would in Rust]]></summary></entry><entry><title type="html">Anyhow v1.2.0 Migration to rust_core</title><link href="http://localhost:4000/technical/2023/12/07/anyhow-1-2-0-migration-to-rust-core.html" rel="alternate" type="text/html" title="Anyhow v1.2.0 Migration to rust_core" /><published>2023-12-07T00:00:00+00:00</published><updated>2023-12-07T00:00:00+00:00</updated><id>http://localhost:4000/technical/2023/12/07/anyhow-1-2-0-migration-to-rust-core</id><content type="html" xml:base="http://localhost:4000/technical/2023/12/07/anyhow-1-2-0-migration-to-rust-core.html"><![CDATA[<h1 id="anyhow-v120-migration-to-rust_core">Anyhow v1.2.0: Migration to rust_core</h1>
+
+<p>package: <a href="https://pub.dev/packages/anyhow">anyhow</a></p>
+
+<p>anyhow’s Result type was migrated into rust_core. Anyhow remains completely standalone, only re-exporting the <code class="language-plaintext highlighter-rouge">Result</code> Type from <a href="https://pub.dev/packages/rust_core">rust_core</a>, but gains compatibility with the rest of the rust_core ecosystem.</p>
+
+<p>In addition to the newly compatible types and extensions, such as <code class="language-plaintext highlighter-rouge">Option</code> and the <code class="language-plaintext highlighter-rouge">cell</code> library, the <code class="language-plaintext highlighter-rouge">Result</code> type got a big upgrade. There will likely be a separate post explaining more when rust_core is officially announced. But the big news I want to mention is the Result type now supports <a href="https://mcmah309.github.io/rust_core/libs/result/result.html#early-return-key-notation">Early Return Key Notation</a> which is a derivative of “Do Notation”.</p>
+
+<div class="language-dart highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+</pre></td><td class="rouge-code"><pre><span class="kt">void</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">usingTheEarlyReturnKey</span><span class="p">();</span>
+    <span class="n">usingRegularPatternMatching</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">Result</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">String</span><span class="p">&gt;</span> <span class="n">usingTheEarlyReturnKey</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Result</span><span class="p">((</span><span class="err">$</span><span class="p">){</span> <span class="c1">// Early Return Key</span>
+    <span class="c1">// Will return here with 'Err("error")'</span>
+    <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">willAlwaysReturnErr</span><span class="p">()[</span><span class="err">$</span><span class="p">]</span><span class="o">.</span><span class="na">toInt</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="n">Result</span><span class="p">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="kt">String</span><span class="p">&gt;</span> <span class="n">usingRegularPatternMatching</span><span class="p">(){</span>
+    <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+    <span class="k">switch</span><span class="p">(</span><span class="n">willAlwaysReturnErr</span><span class="p">()){</span>
+    <span class="k">case</span> <span class="n">Err</span><span class="p">(</span><span class="o">:</span><span class="kd">final</span> <span class="n">err</span><span class="p">)</span><span class="o">:</span>
+        <span class="k">return</span> <span class="n">Err</span><span class="p">(</span><span class="n">err</span><span class="p">);</span>
+    <span class="k">case</span> <span class="n">Ok</span><span class="p">(</span><span class="o">:</span><span class="kd">final</span> <span class="n">ok</span><span class="p">)</span><span class="o">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ok</span><span class="o">.</span><span class="na">toInt</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">Result</span><span class="p">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="kt">String</span><span class="p">&gt;</span> <span class="n">willAlwaysReturnErr</span><span class="p">()</span> <span class="o">=</span><span class="p">&gt;</span> <span class="n">Err</span><span class="p">(</span><span class="s">"error"</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>Enjoy!</p>]]></content><author><name>Dillon McMahon</name></author><category term="technical" /><category term="dart" /><summary type="html"><![CDATA[Anyhow v1.2.0: Migration to rust_core]]></summary></entry></feed>

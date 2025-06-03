@@ -1,0 +1,47 @@
+# English (default)
+en: &DEFAULT_EN
+  skip_links: "Skip links"
+  skip_primary_nav: "Skip to primary navigation"
+  skip_content: "Skip to content"
+  skip_footer: "Skip to footer"
+  menu_label: "Menu"
+  search_label: "Search"
+  site_search: "Site Search"
+  results_found: "Result(s) found"
+  search_placeholder_text: "Enter your search term..."
+  home_label: "Home"
+  newer_post: "Newer Post"
+  older_post: "Older Post"
+  by_author: "by"
+  posted_on: "Posted on"
+  read_time: "read"
+  less_than: "less than"
+  minute_read: "minute read"
+  minutes_read: "minutes read"
+  back_to_top: "Back to top"
+  permalink: "Permalink"
+  edit_page: "Edit page"
+  comments_label: "Leave a comment"
+  comments_title: "Comments"
+  comment_form_info: 'Your email address will not be published. Required fields are marked <span class="required">*</span>'
+  comment_form_comment_label: "Comment"
+  comment_form_md_info: "Markdown is supported."
+  comment_form_name_label: "Name"
+  comment_form_email_label: "Email"
+  comment_form_website_label: "Website (optional)"
+  comment_btn_submit: "Submit Comment"
+  comment_btn_submitted: "Submitted"
+  comment_success_msg: "Thanks for your comment! It will show on the site once it has been approved."
+  comment_error_msg: "Sorry, there was an error with your submission. Please make sure all required fields have been completed and try again."
+  loading_label: "Loading..."
+  search_algolia_no_results: "No results found."
+
+# Another locale
+en-US:
+  <<: *DEFAULT_EN
+en-CA:
+  <<: *DEFAULT_EN
+en-GB:
+  <<: *DEFAULT_EN
+en-AU:
+  <<: *DEFAULT_EN

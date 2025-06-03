@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--
+    So Simple Jekyll Theme 3.2.0
+    Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+    Free for personal and commercial use under the MIT license
+    https://github.com/mmistakes/so-simple-theme/blob/master/LICENSE
+-->
+<html lang="en-US" class="no-js">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  
+
+  
+    
+    <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Announcing activate | Your Site Title</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Announcing activate" />
+<meta name="author" content="Dillon McMahon" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Announcing activate: A sane way to manage environment configuration" />
+<meta property="og:description" content="Announcing activate: A sane way to manage environment configuration" />
+<link rel="canonical" href="http://localhost:4000/technical/2024/02/10/announcing-activate.html" />
+<meta property="og:url" content="http://localhost:4000/technical/2024/02/10/announcing-activate.html" />
+<meta property="og:site_name" content="Your Site Title" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-10T00:00:00+00:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Announcing activate" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Dillon McMahon"},"dateModified":"2024-02-10T00:00:00+00:00","datePublished":"2024-02-10T00:00:00+00:00","description":"Announcing activate: A sane way to manage environment configuration","headline":"Announcing activate","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/technical/2024/02/10/announcing-activate.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/images/site-logo.png"},"name":"Dillon McMahon"},"url":"http://localhost:4000/technical/2024/02/10/announcing-activate.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+  <script>
+    /* Cut the mustard */
+    if ( 'querySelector' in document && 'addEventListener' in window ) {
+      document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js';
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/default.css">
+  
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="Your Site Title" href="/feed.xml">
+<!-- start custom head snippets -->
+
+<!-- insert favicons. use http://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+</head>
+
+
+  <body class="layout--post  announcing-activate">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop">
+      <ul><li><a href="/">Home</a></li><li><a href="/posts/">Posts</a></li><li><a href="/categories/">Categories</a></li><li><a href="/tags/">Tags</a></li><li><a href="/search/">Search</a></li></ul>
+    </nav>
+  </div><!-- /.navigation-wrapper -->
+
+
+    <header class="masthead">
+  <div class="wrap">
+    
+      <a href="/" class="site-logo" rel="home" title="Your Site Title">
+        <img src="/images/site-logo.png" class="site-logo-img animated fadeInDown" alt="Your Site Title">
+      </a>
+    
+    
+    
+      
+        <div class="site-title animated fadeIn"><a href="/">Your Site Title</a></div>
+      
+      <p class="site-description animated fadeIn" itemprop="description">This is a brief description of your site. You can customize this description.</p>
+    
+  </div>
+</header><!-- /.masthead -->
+
+
+    <main id="main" class="main-content" aria-label="Content">
+  <article class="h-entry">
+    
+
+    <div class="page-wrapper">
+      <header class="page-header">
+        
+        
+          <h1 id="page-title" class="page-title p-name">Announcing activate
+</h1>
+        
+      </header>
+
+      <div class="page-sidebar">
+        <div class="page-author h-card p-author"><div class="author-info"><div class="author-name">
+        <em>by</em> <span class="p-name">Dillon McMahon</span>
+      </div>
+
+<span class="read-time">1 min read</span>
+
+    <time class="page-date dt-published" datetime="2024-02-10T00:00:00+00:00"><a class="u-url" href="">February 10, 2024</a>
+</time>
+
+  </div>
+</div>
+
+        
+  <h3 class="page-taxonomies-title">Categories</h3>
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a class="p-category" href="/categories/#technical" title="Pages filed under technical">technical</a></li>
+  </ul>
+
+
+        
+  <h3 class="page-taxonomies-title">Tags</h3>
+  <ul class="page-taxonomies"><li class="page-taxonomy"><a href="/tags/#rust" title="Pages tagged rust" rel="tag">rust</a></li>
+  </ul>
+
+
+      </div>
+
+      <div class="page-content">
+        <div class="e-content">
+          <h1 id="announcing-activate-a-sane-way-to-manage-environment-configuration">Announcing <code class="language-plaintext highlighter-rouge">activate</code>: A sane way to manage environment configuration</h1>
+
+<p>Recently I got sick of the way I had different imperative ways of managing environments across language domains and having to re-configure things locally to replicate QA bugs, plus the hassle of working in a monorepo. I am also a big fan of tools like <code class="language-plaintext highlighter-rouge">direnv</code> and that inspired me to create <a href="https://github.com/mcmah309/activate?tab=readme-ov-file">activate</a>.</p>
+
+<p>Activate allows you to switch an entire repo/monorepo between environments and reload environment changes with a single command.</p>
+
+<h2 id="example-use-cases">Example Use Cases</h2>
+
+<ol>
+  <li>You have assets, data files, executables, or program files that should be used in different environments like Dev, QA, etc. e.g.
+    <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre> <span class="nn">[dev.links]</span>
+ <span class="py">"app/data"</span> <span class="p">=</span> <span class="s">"path/to/dev/data"</span>
+
+ <span class="nn">[qa.links]</span>
+ <span class="py">"app/data"</span> <span class="p">=</span> <span class="s">"path/to/qa/data"</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p><code class="language-plaintext highlighter-rouge">app/data</code> is created and symlinked to the file or directory of the active environment.</p>
+  </li>
+  <li>You want different environment variables in each environment e.g.
+    <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre> <span class="nn">[dev.env]</span>
+ <span class="py">HOST</span> <span class="p">=</span> <span class="s">"localhost"</span>
+ <span class="py">PORT</span> <span class="p">=</span> <span class="mi">3000</span>
+
+ <span class="nn">[qa.env]</span>
+ <span class="py">HOST</span> <span class="p">=</span> <span class="s">"178.32.44.2"</span>
+ <span class="py">PORT</span> <span class="p">=</span> <span class="mi">443</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>To load into your current shell run (this will also unload any activate environment).</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> <span class="nb">eval</span> <span class="s2">"</span><span class="si">$(</span>activate <span class="nt">-e</span> &lt;name&gt;<span class="si">)</span><span class="s2">"</span><span class="sb">`</span>
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>Alternatively you can load the active <code class="language-plaintext highlighter-rouge">.env</code> file yourself or from an application, located at <code class="language-plaintext highlighter-rouge">.activate/.env</code>.
+ This can also be useful for dev containers. Just add <code class="language-plaintext highlighter-rouge">"runArgs": ["--env-file",".activate/.env"]</code> to your
+ <code class="language-plaintext highlighter-rouge">.devcontainer/devcontainer.json</code> file.</p>
+  </li>
+  <li>You are using a mono-repo and want to switch everything to a certain environment. Run:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td><td class="rouge-code"><pre> activate <span class="nt">-r</span> &lt;name&gt;
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>any directory/subdirecory (respecting <code class="language-plaintext highlighter-rouge">.gitignore</code>) with an <code class="language-plaintext highlighter-rouge">activate.toml</code> file is switched to <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code></p>
+  </li>
+</ol>
+
+<p>I hope this helps you too, more to come :)</p>
+
+        </div>
+
+        
+          <div class="page-share">
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2024%2F02%2F10%2Fannouncing-activate.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--facebook btn--small"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i> <span>Share</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Announcing+%60activate%60%20http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2024%2F02%2F10%2Fannouncing-activate.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--twitter btn--small"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i> <span>Tweet</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2024%2F02%2F10%2Fannouncing-activate.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--linkedin btn--small"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> <span>LinkedIn</span></a>
+  <a href="https://reddit.com/submit?title=Announcing+%60activate%60&url=http%3A%2F%2Flocalhost%3A4000%2Ftechnical%2F2024%2F02%2F10%2Fannouncing-activate.html" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" class="btn btn--reddit btn--small"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i> <span>Reddit</span></a>
+</div>
+
+        
+
+        
+
+        <nav class="page-pagination" role="navigation">
+  
+    <a class="page-previous" href="/technical/2023/12/11/announcing-rust-core.html">
+      <h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title">
+        <i class="fas fa-arrow-left"></i> Announcing rust_core
+
+      </span>
+    </a>
+  
+
+  
+    <a class="page-next" href="/technical/2024/03/03/rust-core-0-4-0.html">
+      <h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">
+        rust_core 0.4 Release and Project Update
+ <i class="fas fa-arrow-right"></i>
+      </span>
+    </a>
+  
+</nav>
+
+      </div>
+    </div>
+  </article>
+</main>
+
+
+    <footer id="footer" class="site-footer">
+  <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+<div class="social-icons"><a class="social-icon" href="https://twitter.com/yourusername"><i class="fab fa-twitter-square fa-2x" title="Twitter"></i></a><a class="social-icon" href="https://github.com/yourusername"><i class="fab fa-github-square fa-2x" title="GitHub"></i></a><a class="social-icon" href="/feed.xml"><i class="fas fa-rss-square fa-2x" title="Feed"></i></a></div><div class="copyright">
+    
+      <p>&copy; 2025 Your Site Title. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p>
+    
+  </div>
+</footer>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+
+  </body>
+
+</html>
