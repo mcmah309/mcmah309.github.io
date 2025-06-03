@@ -16,20 +16,20 @@
   
     
     <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Search | mcmah309 Blog</title>
+<title>About | mcmah309 Blog</title>
 <meta name="generator" content="Jekyll v4.4.1" />
-<meta property="og:title" content="Search" />
+<meta property="og:title" content="About" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Tech talk and ongoing open source projects" />
 <meta property="og:description" content="Tech talk and ongoing open source projects" />
-<link rel="canonical" href="http://localhost:4000/search/" />
-<meta property="og:url" content="http://localhost:4000/search/" />
+<link rel="canonical" href="http://localhost:4000/about/" />
+<meta property="og:url" content="http://localhost:4000/about/" />
 <meta property="og:site_name" content="mcmah309 Blog" />
 <meta property="og:type" content="website" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="Search" />
+<meta property="twitter:title" content="About" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebPage","description":"Tech talk and ongoing open source projects","headline":"Search","url":"http://localhost:4000/search/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","description":"Tech talk and ongoing open source projects","headline":"About","name":"mcmah309 Blog","url":"http://localhost:4000/about/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -56,7 +56,7 @@
 </head>
 
 
-  <body class="layout--search  search">
+  <body class="layout--page  about">
     <nav class="skip-links">
   <h2 class="screen-reader-text">Skip links</h2>
   <ul>
@@ -97,18 +97,16 @@
       <header class="page-header">
         
         
-          <h1 id="page-title" class="page-title">Search</h1>
+          <h1 id="page-title" class="page-title">About</h1>
         
       </header>
       <div class="page-content">
-        
+        <div style="text-align: center; margin-bottom: 30px;">
+  <img src="/images/profile.jpg" alt="Your Name" style="width: 200px; height: 200px; object-fit: cover; border-radius: 50%; border: 4px solid #f1f1f1;">
+</div>
 
+Hello, I'm a Software Engineer!
 
-<form onsubmit="return false;">
-  <input type="input" id="search" class="search-input" placeholder="Enter your search term..." autofocus>
-</form>
-
-<div id="results"></div>
 
 
         
@@ -133,68 +131,6 @@
   <script src="/assets/js/main.min.js"></script>
   <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
 
-<script src="/assets/js/lunr/lunr.min.js"></script>
-  <script src="/assets/js/search-data.js"></script>
-  <script>
-    var idx = lunr(function () {
-      
-      // the, the normal lunr index initialization
-      this.field('title')
-      this.field('excerpt')
-      this.field('categories')
-      this.field('tags')
-      this.ref('id')
-
-      this.pipeline.remove(lunr.trimmer)
-
-      // add documents to index
-      for (var item in store) {
-        this.add({
-          title: store[item].title,
-          excerpt: store[item].excerpt,
-          categories: store[item].categories,
-          tags: store[item].tags,
-          id: item
-        })
-      }
-    });
-
-    console.log(jQuery.type(idx));
-
-    $(document).ready(function () {
-      $('input#search').on('keyup', function () {
-        var resultdiv = $('#results');
-        var query = $(this).val().toLowerCase();
-        var result =
-          idx.query(function (q) {
-            query.split(lunr.tokenizer.separator).forEach(function (term) {
-              q.term(term, { boost: 100 })
-              if (query.lastIndexOf(" ") != query.length - 1) {
-                q.term(term, { usePipeline: false, wildcard: lunr.Query.wildcard.TRAILING, boost: 10 })
-              }
-              if (term != "") {
-                q.term(term, { usePipeline: false, editDistance: 1, boost: 1 })
-              }
-            })
-          });
-        resultdiv.empty();
-        resultdiv.prepend('<p class="results__found">' + result.length + ' Result(s) found</p>');
-        for (var item in result) {
-          var ref = result[item].ref;
-          var searchitem =
-            '<article class="entry">' +
-              '<h3 class="entry-title">' +
-                '<a href="' + store[ref].url + '">' + store[ref].title + '</a>' +
-              '</h3>' +
-              '<div class="entry-excerpt">' +
-                '<p>' + store[ref].excerpt.split(" ").splice(0, 20).join(" ") + '...</p>' +
-              '</div>' +
-            '</article>';
-          resultdiv.append(searchitem);
-        }
-      });
-    });
-  </script>
 
   </body>
 
