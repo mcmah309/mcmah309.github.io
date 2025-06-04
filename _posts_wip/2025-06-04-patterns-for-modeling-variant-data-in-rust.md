@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Approaches For Modeling Data in Rust With Common Fields"
+title: "Patterns for Modeling Variant Data in Rust"
 # subtitle: ""
 date: 2025-06-04
 categories: [technical]
@@ -15,7 +15,7 @@ author:
 share: true
 comments: false
 ---
-# Approaches For Modeling Data in Rust With Common Fields
+# Patterns for Modeling Variant Data in Rust
 
 When building complex systems in Rust, one of the fundamental challenges developers face is how to organize their data structures to maintain type safety, avoid code duplication, keep their API clean, and remain flexible to changes. This article explores six different approaches to data modeling using a search engine as our example, examining the trade-offs between each approach.
 
