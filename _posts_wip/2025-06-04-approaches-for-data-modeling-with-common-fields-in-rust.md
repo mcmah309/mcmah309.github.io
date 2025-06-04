@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Approaches For Modeling Data in Rust"
+title: "Approaches For Modeling Data in Rust With Common Fields"
 # subtitle: ""
 date: 2025-06-04
 categories: [technical]
@@ -15,9 +15,9 @@ author:
 share: true
 comments: false
 ---
-# Approaches For Modeling Data in Rust
+# Approaches For Modeling Data in Rust With Common Fields
 
-When building complex systems in Rust, one of the fundamental challenges developers face is how to organize their data structures to maintain type safety, avoid code duplication, keep your API clean, and remain flexible to changes. This article explores six different approaches to data modeling using a search engine as our example, examining the trade-offs between each approach.
+When building complex systems in Rust, one of the fundamental challenges developers face is how to organize their data structures to maintain type safety, avoid code duplication, keep their API clean, and remain flexible to changes. This article explores six different approaches to data modeling using a search engine as our example, examining the trade-offs between each approach.
 
 ## The Problem: Modeling Complex Search Functionality
 
@@ -50,13 +50,13 @@ pub struct Search<'a> {
 }
 ```
 
-This monolithic approach works but has obvious problems: fields that don't apply to certain search types are still present, making the API confusing and potentially error-prone. For the moment, ignoring how this type is configured, consider we just need to be able to execute a search, knowing that common fields require common configuration / execution paths. How should we model this data such that we avoid unnecessary code duplication and remain flexible to new search configurations, while maintaining a clean understandable api?
+This monolithic approach works but has obvious problems: fields that don't apply to certain search types are still present, making the API confusing and potentially error-prone. For the moment, ignoring how this type is configured (usually all at once or through a builder pattern), consider we just need to be able to execute a search, knowing that common fields require common configuration / execution paths. How should we model this data such that we avoid unnecessary code duplication and remain flexible to new search configurations, while maintaining a clean understandable api?
 
 Side: It it worth highlighting that often code duplication is not in itself bad and often necessary. It should never be avoided just for the sake of avoiding duplicated code. Too much abstraction for this sake is often itself brittle. As a general rule, the more you duplicate code, the more contextually large your program becomes and you have to write, while the more abstraction you introduce, the more complex your code becomes. For changes related to foreseen feature additions, duplicate code often results in changing a larger surface area of your code and abstraction often results in changes being easier to implement. For changes related to unforeseen feature additions, duplicate code often results in changing a larger surface area of your code and abstraction often results in changes being harder to implement.
 
 ## Approach 1: Struct Per Type
 
-This approach is the most beginner friendly and yields well to less complex scenarios. It involves completely separating the data into one type per search config. It may result in the most code duplication. But if you don't have to pass the type into functions and can then just pass fields. Unfortunately function nesting and thus passing around the type is hard to avoid it.
+This approach is the most beginner friendly and yields well to less complex scenarios. It involves completely separating the data into one type per search config. It may result in the most code duplication. But if you don't have to pass the type into functions and can then just pass fields, then code may be re-used between types. Unfortunately function nesting and thus passing around the type is hard to avoid it.
 
 ```rust
 pub struct KeywordSearch<'a> {
@@ -257,7 +257,7 @@ pub enum Search<'a> {
 
 **Drawbacks:**
 - Significant field duplication across all structs
-- May require the most duplicate code for handling common fields
+- May require the most duplicate code for handling common fields through delegating methods
 
 ## Approach 5: Monolith With Kind
 
@@ -303,7 +303,7 @@ pub struct Search<'a> {
 
 ## Approach 6: Trait-Based Composition
 
-The final approach comes full circle back to the first. It decomposes functionality into individual structs and provides traits for individual fields when you need to reuse functions.
+This approach does not rely on the structure of the backing data, but instead relies on the ability to get the backing data through traits. Traits are provided for individual fields when you need to reuse functions. For the sake of example, the structure of the backing data is the same as approach 1. 
 
 ```rust
 // Concrete struct implementations
@@ -653,23 +653,22 @@ impl HasSemanticRatio for HybridSearch {
 - Significant boilerplate for trait definitions
 - Still need to decide on backing data structures (usually struct per search type see next section)
 - Runtime type checking/casting may still be needed deep in function calls
-- Can become complex to understand and maintain
-- Trait bounds can become unwieldy
+- Can become complex to understand and maintain - trait bounds can become unwieldy
 
-## Conclusion
+## Which Approach Is Best
 
 There's no one-size-fits-all solution to data modeling in Rust. The choice depends on your specific requirements around type safety, flexibility, maintenance burden, and API design. Consider your domain's stability, the frequency of changes, and the complexity you're willing to accept in your codebase.
 
-# Personal Thoughts
+# Discussion
 
 Approach 1 is often the go to and the simplest. If you can design your functions to take fields rather the single struct type, you can avoid most code duplication. Often in practice, this pure functional approach is not implemented and full types are passed around. This is partially because of the amount of api changes needed for adding a single variable and you'd likely still need an accompanying `Kind` type. Thus, this is often not the correct solution.
 
-I never go for approach 1 or 2 (Single common type). Since I've learned the hard way I'm not omnipotent, thus I cannot predict how the api will change in the future. Implementations using these two approaches tends to become the most wonky as more types are introduced and fields overlap some types but not all. If you tend to prefer one of these choices, I highly recommend considering approach 5 instead. As this follows the same abstraction concept, except is much more flexible to change.
+I never go for approach 2 or 3 (Single common type). Since I've learned the hard way I'm not omnipotent, thus I cannot predict how the api will change in the future. Implementations using these two approaches tends to become the most wonky as more types are introduced and fields overlap some types but not all. If you tend to prefer one of these choices, I highly recommend considering approach 5 instead. As this follows the same abstraction concept, except is much more flexible to change.
 
-Approach 4 satisfies me the most conceptually. The concerns are well separated. Unfortunately in practice I've found as you pass around the enum the significant amount of branching inside functions results in a lot of boilerplate at the implementation level and I often need to write more closures/functions avoid duplication inside the branches. Often I end up even implementing common getter and setter fields to avoid some of this boilerplate.
+Approach 4 satisfies me the most conceptually. The concerns are well separated. Unfortunately in practice I've found as you pass around the enum the significant amount of branching inside functions results in a lot of boilerplate at the implementation level and I often need to write more closures/functions avoid duplication inside the branches. Often I end up even implementing common getter and setter fields to avoid some of this boilerplate. Though a macro could definitely reduce this.
 
 Approach 5 on first glance is gross. But in practice I've found it to be the most manageable for current implementations and resilient to future change. There is minimal boilerplate/duplication and using the structure is straight forward field access. If you need to know the kind, you can easily match on it. If you can get over the one large data structure and unwraps, it can be surprisingly pleasant to work with. Though especially for newcomers to the code, if you cannot keep which exists for which kind in your head it can easily become unwieldly. Maybe not surprisingly this approach exists often in the wild as well.
 
-Approach 6 has all the strengths of approach 1 and less of the drawbacks. If you can get over the substantial amount of boilerplate at the initial onset and possibly every time you declare a function definition, it might be useful. You can worry less about function parameters and allows casting deep in function calls. Though traits, boxing values, and casting come with it's own set of drawbacks and pains to work with.
+Approach 6 has the benefit over approach 1 since there is no need to decompose the struct to avoid function calling duplication, instead you define function signatures to take the required traits or combinations. Though there is a substantial amount of boilerplate at the initial onset and possibly every time you declare a function definition, and boxing values/casting comes with it's own set of drawbacks and pains to work with. A well constructed macro may be able to reduce this boilerplate.
 
 Now which approach do I usually use? Personally I reach usually reach for 5. It allows me to prototype the fastest and get something done. If I am considering the long term viability of a project and know other individuals will look and work on the code. I may reach for 3, which is more of a rustic way.
