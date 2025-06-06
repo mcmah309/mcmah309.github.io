@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Announcing `activate`"
+title: "Announcing `activate`: A sane way to manage environment configuration"
 # subtitle: ""
 date: 2024-02-10
 categories: [technical]
@@ -15,8 +15,6 @@ author:
 share: true
 comments: false
 ---
-
-# Announcing `activate`: A sane way to manage environment configuration
 
 Recently I got sick of the way I had different imperative ways of managing environments across language domains and having to re-configure things locally to replicate QA bugs, plus the hassle of working in a monorepo. I am also a big fan of tools like `direnv` and that inspired me to create [activate](https://github.com/mcmah309/activate?tab=readme-ov-file).
 

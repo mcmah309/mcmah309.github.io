@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Introducing `error_set`"
+title: "Introducing `error_set`: A Zig-Inspired Approach to Error Handling in Rust"
 # subtitle: ""
 date: 2024-04-08
 categories: [technical]
@@ -15,8 +15,6 @@ author:
 share: true
 comments: false
 ---
-
-# Introducing `error_set`: A Zig-Inspired Approach to Error Handling in Rust
 
 Github: <https://github.com/mcmah309/error_set>
 

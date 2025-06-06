@@ -16,8 +16,6 @@ share: true
 comments: false
 ---
 
-# Package Highlight: `dart_mappable`
-
 [https://pub.dev/packages/dart_mappable](https://pub.dev/packages/dart_mappable)
 
 Many developers are familiar with the [freezed](https://pub.dev/packages/freezed) package, but fewer have heard of [dart_mappable](https://pub.dev/packages/dart_mappable). Both packages aim to bring [data classes](https://kotlinlang.org/docs/data-classes.html) to Dart, but `dart_mappable` makes a few tradeoffs to offer significant benefits in return.

@@ -16,8 +16,6 @@ share: true
 comments: false
 ---
 
-# The Result Type In Dart
-
 Every modern programming language has error handling. Like Python, Dart chose the unchecked try-catch catch pattern, Java went with checked try-catch pattern, Zig went with Error Unions, and Rust went the `Result` type.
 
 ## What Is a Result Monad Type And Why Use it?

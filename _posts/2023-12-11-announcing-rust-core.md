@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Announcing `rust_core`"
+title: "Announcing Rust Core in Dart: Program in Dart Like You Would in Rust"
 # subtitle: ""
 date: 2023-12-11
 categories: [technical]
@@ -15,8 +15,6 @@ author:
 share: true
 comments: false
 ---
-
-# Announcing Rust Core in Dart: Program in Dart Like You Would in Rust
 
 For Rust developers involved in programming with Dart, or Dart developers interested in idiomatic and safe programming, we have developed "rust_core," a package designed to implement Rust's core library in Dart. `Result`, `Option`, `Cell`, `OnceCell`, `LazyCell`, etc. Are all done, along with nearly 200 extension methods for different scenarios, such as `Future<Result<S,F>>`, `Result<Option<S>,F>`, `Result<S?,F>`, etc. just to name a few.
 

@@ -16,8 +16,6 @@ share: true
 comments: false
 ---
 
-# Anyhow v1.2.0: Migration to rust_core
-
 package: [anyhow](https://pub.dev/packages/anyhow)
 
 anyhow's Result type was migrated into rust_core. Anyhow remains completely standalone, only re-exporting the `Result` Type from [rust_core](https://pub.dev/packages/rust_core), but gains compatibility with the rest of the rust_core ecosystem.
