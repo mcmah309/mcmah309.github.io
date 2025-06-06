@@ -18,11 +18,11 @@ comments: false
 
 ## Definitions
 
-**ArrayVec:** This is a vector-like structure with a fixed maximum capacity. Unlike a regular array, its actual size can change dynamically at runtime, accommodating a variable number of elements up to its capacity. The memory for elements is initialized upon insertion. This makes `ArrayVec` suitable for situations where you need more flexibility than a regular array but with a predictable, fixed maximum size.
+[ArrayVec](https://crates.io/crates/arrayvec): This is a vector-like structure with a fixed maximum capacity. Unlike a regular array, its actual size can change dynamically at runtime, accommodating a variable number of elements up to its capacity. The memory for elements is initialized upon insertion. This makes `ArrayVec` suitable for situations where you need more flexibility than a regular array but with a predictable, fixed maximum size.
 
-**SmallVec:** `SmallVec` acts like a vector, storing its items on the stack up to a predefined limit. If this limit is exceeded, it transitions to heap storage. This design is ideal when you have a "soft" upper size limit - cases where the collection rarely exceeds a certain size, but you want to avoid program failure if it does. It's less optimal than a regular array or a `Vec` when used by itself outside this scenario.
+[SmallVec](https://crates.io/crates/smallvec): `SmallVec` acts like a vector, storing its items on the stack up to a predefined limit. If this limit is exceeded, it transitions to heap storage. This design is ideal when you have a "soft" upper size limit - cases where the collection rarely exceeds a certain size, but you want to avoid program failure if it does. It's less optimal than a regular array or a `Vec` when used by itself outside this scenario.
 
-**TinyVec:** This is a hybrid of `ArrayVec` and a heap-allocated `Vec`. Like `SmallVec`, it transitions from stack to heap storage when a limit is exceeded. However, TinyVec is distinct in that it avoids using "unsafe" code, potentially increasing safety. A limitation is that types stored in `TinyVec` must implement the Default trait.
+[TinyVec](https://crates.io/crates/tinyvec): This is a hybrid of `ArrayVec` and a heap-allocated `Vec`. Like `SmallVec`, it transitions from stack to heap storage when a limit is exceeded. However, TinyVec is distinct in that it avoids using "unsafe" code, potentially increasing safety. A limitation is that types stored in `TinyVec` must implement the Default trait.
 
 ## Discussion
 
