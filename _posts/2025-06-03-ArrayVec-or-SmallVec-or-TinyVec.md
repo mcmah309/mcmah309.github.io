@@ -16,8 +16,6 @@ share: true
 comments: false
 ---
 
-# Should You Really Ever Use ArrayVec or SmallVec or TinyVec As Your Go To Vec?
-
 ## Definitions
 
 **ArrayVec:** This is a vector-like structure with a fixed maximum capacity. Unlike a regular array, its actual size can change dynamically at runtime, accommodating a variable number of elements up to its capacity. The memory for elements is initialized upon insertion. This makes `ArrayVec` suitable for situations where you need more flexibility than a regular array but with a predictable, fixed maximum size.
@@ -28,14 +26,14 @@ comments: false
 
 ## Discussion
 
-For all these "vector on the stack" types, careful consideration is crucial. Generally, they should be used for small collections (significantly less than the 1-2 MB typical stack size limit) to prevent stack overflow. Additionally, while these structures can be returned from functions, this actually might
-make these structures less performant. This is because compiler optimizations may invoke a "stack copy" when returning the value or passing the value to a function. Therefore, these should be primarily used within a single function's scope and avoided in scenarios where large or unpredictable sizes are expected. Also each of these structures now have an extra branch (e.g. `.is_on_stack()`) for operations such as `.push()`.
+For all these "vector on the stack" types, careful consideration is crucial. Generally, they should be used for small collections (significantly less than the 1-2 MB typical stack size limit) to prevent stack overflow. Additionally, while these structures can be returned from functions, this actually might make these structures less performant. This is because compiler optimizations may invoke a "stack copy" when returning the value or passing the value to a function. Therefore, these should be primarily used within a single function's scope and avoided in scenarios where large or unpredictable sizes are expected. Also, it is worth noting each of these structures now have an extra branch (e.g. `.is_on_stack()`) for operations such as `.push()`. This is often negligible in practice due to branch prediction, although it's still a valid consideration.
 
-That said, the primary optimization to be made for vectors is not actually keeping them on the stack, it is avoiding re-allocations.
-The better strategy is to simply reuse a regular `Vec` between invocations - create it once, then use it, call `.clear()` on it and repeat. That way you get no additional allocations and no overhead on `.push()` or passing it around.
+That said, the primary optimization to be made for vectors is not actually keeping them on the stack, it is avoiding re-allocations. The better strategy is to simply reuse a regular `Vec` between invocations - create it once, then use it, call `.clear()` on it and repeat. That way you get no additional allocations and no overhead on `.push()` or passing it around.
 
-The real use case for `SmallVec` and such is making a collection of them, such as `Vec<SmallVec>` (or more realistically `BTreeSet<MyStruct>` where `MyStruct` contains a `SmallVec` inside) to optimize for cache locality. Loads from RAM are slow compared to the speed of the CPU, so putting the data closer together minimizes the amount of loads.
+A real use case for `SmallVec` and such, is making a collection of them, such as `Vec<SmallVec>` (or more realistically `BTreeSet<MyStruct>` where `MyStruct` contains a `SmallVec` inside) to optimize for cache locality. Loads from RAM are slow compared to the speed of the CPU, so putting the data closer together minimizes the amount of loads. Though this is also delicate, as the larger memory footprint can actually hurt cache utilization when you have many instances, potentially negating the performance benefits you were seeking.
+
+Another use case for optimizations is in tight loops or hot paths where the performance characteristics get amplified. A single `SmallVec` allocation in application startup code is unlikely to matter, but the same choice in a parser's inner loop processing millions of items could be significant.
 
 ## Conclusion
 
-Using any of these types is likely a premature optimization and the standard `Vec` should usually be preferred, unless the code is performance critical and previously mentioned bounds hold.
+Careful consideration should be placed when using these types as they increase cognitive overhead and may make apis less composable if switching between types. Using any of these types is likely a premature optimization unless justified by **measurable** performance gain. The standard `Vec` should usually be preferred.
