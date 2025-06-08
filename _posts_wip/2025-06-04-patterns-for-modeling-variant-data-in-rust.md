@@ -346,7 +346,7 @@ pub struct Search<'a> {
 }
 ```
 
-On first glance this may feel like the wrong solution. But in practice, this may be the most manageable and resilient to future change. There is minimal boilerplate/duplication and using the structure is straight forward field access. To know the kind, one can easily match on it. If you can get over the one large data structure and unwraps, it can be surprisingly pleasant to work with. This structure is ideal for rapid development and prototyping. Though as more and more fields are added, especially for newcomers to the code, it becomes harder to keep which exists for which kind in your head. Thus it can easily become unwieldly. Maybe not surprisingly this approach exists often in the wild as well.
+On first glance this may feel like the wrong solution. But in practice, this may be the most manageable and resilient to future change. There is minimal boilerplate/duplication and using the structure is straight forward field access. To know the kind, one can easily match on it. If you can get over the one large data structure and unwraps, it can be surprisingly pleasant to work with as little thought is needed to api structure and no refactoring is usually needed when adding fields. This structure is ideal for rapid development and prototyping. Though as more and more fields are added, especially for newcomers to the code, it becomes harder to keep which exists for which kind in your head. Thus it can easily become unwieldly. Maybe not surprisingly this approach exists often in the wild as well.
 
 **Benefits:**
 
@@ -354,6 +354,7 @@ On first glance this may feel like the wrong solution. But in practice, this may
 - Easy field access
 - Least boilerplate
 - Most api flexibility
+- Pairs naturally with the builder pattern
 
 **Drawbacks:**
 - Largest compile time size
