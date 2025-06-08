@@ -144,6 +144,7 @@ pub struct HybridSearch {
     semantic_ratio: f32,
 }
 ```
+
 One could take this a step further an extract more fields into different cores. e.g.
 
 ```rust
@@ -189,6 +190,9 @@ pub struct HybridSearch {
 
 But this should be done with caution and not just the sake of removing duplicate field declaration. since there is now additional field indirection and the using such code likely become more brittle to change as new types and fields are added. The focus should be on the use case. Will such core indirection allow us to re-use code? The answer depends on the domain, but likely less so then one might imagine at the onset.
 
+**A Critical Limitation:**
+While this approach initially appears clean, it tends to become problematic as APIs evolve. Programmers cannot predict how the API will change in the future, and this approach becomes particularly unwieldy when new search types are introduced that share fields with some existing types but not others. The rigid core structure makes it difficult to accommodate these partial overlaps without creating awkward intermediate types or duplicating fields anyway.
+
 **Benefits:**
 - Limits field duplication due to shared cores
 - Limited boilerplate
@@ -196,9 +200,10 @@ But this should be done with caution and not just the sake of removing duplicate
 
 **Drawbacks:**
 - Some field duplication between `KeywordSearch` and `HybridSearch`
-- Accessing core fields requires going through the `core` field
+- Accessing core fields requires going through "core" fields
 - Limited flexibility for future fields only shared some types
 - Separate typed functions may be needed for each, resulting in more duplication
+-Becomes brittle as the API evolves - difficult to accommodate new types with partial field overlaps
 
 ## Approach 3: Composition With A Single Type and Different Variants
 
@@ -241,6 +246,11 @@ pub struct Search<'a> {
 }
 ```
 
+Like the previous approach, it is also possible to take this a step further and extract more fields into different common types. But it should be considered first if the use case api's would benefit from such an abstraction.
+
+**The Same Fundamental Problem:**
+This approach suffers from the same core issue as Approach 2. The separation of common fields from variant-specific fields creates a rigid structure that becomes difficult to maintain as the API evolves. When new search types are introduced that need some but not all of the fields from existing configurations, you're forced into awkward choices: duplicate fields in the new config, create intermediate shared types, or restructure the entire hierarchy.
+
 **Benefits:**
 - Limits field duplication due to single top level type
 - Common fields easily accessible without indirection
@@ -249,6 +259,7 @@ pub struct Search<'a> {
 **Drawbacks:**
 - Still duplicates fields between `KeywordConfig` and `HybridConfig`
 - Pattern matching may result in more code duplication across branches
+- Rigid separation becomes problematic - difficult to accommodate new types with different field combinations which often requires restructuring when the API evolves
 
 ## Approach 4: Enum as Top Level with Complete Structs
 
@@ -710,5 +721,3 @@ Approach 6 has the benefit over approach 1 since there is no need to decompose t
 ## Which Approach Is Best
 
 There's no one-size-fits-all solution to data modeling in Rust. The choice depends on your specific requirements around type safety, flexibility, maintenance burden, and API design. Consider your domain's stability, the frequency of changes, and the complexity you're willing to accept in your codebase.
-
-That said, typically approach 2 and 3 (Common types) should be avoided. Programmers are not omnipotent, thus they usually cannot predict how the api will change in the future. Implementations using these two approaches tends to become the most wonky as more types are introduced and fields overlap some types but not all. If these approaches seem like a good solution to a problem, consider approach 4 instead. As this follows the same core abstraction concept, except is much more flexible to change.
