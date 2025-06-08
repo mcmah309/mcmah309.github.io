@@ -56,7 +56,7 @@ Side: It it worth highlighting that often code duplication is not in itself bad 
 
 ## Approach 1: Struct Per Type
 
-This approach is the most beginner friendly and yields well to less complex scenarios. It involves completely separating the data into one type per search config. It may result in the most code duplication. But if you don't have to pass the type into functions and can then just pass fields, then code may be re-used between types. Unfortunately function nesting and thus passing around the type is hard to avoid it.
+This approach is the most beginner friendly and yields well to less complex scenarios. It involves completely separating the data into one type per search config.
 
 ```rust
 pub struct KeywordSearch<'a> {
@@ -93,6 +93,8 @@ pub struct HybridSearch {
 }
 ```
 
+This often the go to and the simplest. Although it may result in the most code duplication. But if functions can be designed to take fields rather the single struct type, most code duplication can be avoided. Unfortunately often in practice, this pure functional approach is not implemented and full types are passed around. This is partially because of the amount of api changes needed for adding a single variable, as well as, an accompanying `Kind` type is likely still needed to be passed around. Thus, this is often not the best solution.
+
 **Benefits:**
 
 - Maximum simplicity, each type is completely independent and self-contained
@@ -108,7 +110,7 @@ pub struct HybridSearch {
 
 ## Approach 2: Composition With Separate Types and A Shared Core
 
-This approach extracts common functionality into a shared core structure and each individual type of search exists at the top level:
+This is a common approach in the wild. it extracts common functionality into a shared core with each individual type of search type existing at the top level:
 
 ```rust
 // Common fields used by all search types
@@ -142,9 +144,53 @@ pub struct HybridSearch {
     semantic_ratio: f32,
 }
 ```
+One could take this a step further an extract more fields into different cores. e.g.
+
+```rust
+// Common fields used by all search types
+pub struct SearchCore {
+    offset: usize,
+    limit: usize,
+    time_budget: TimeBudget,
+    ranking_score_threshold: Option<f64>,
+}
+
+// Common fields used by keyword search types
+struct KeywordCore<'a> {
+    terms_matching_strategy: TermsMatchingStrategy,
+    scoring_strategy: ScoringStrategy,
+    locales: Option<Vec<Language>>,
+    query: String,
+}
+
+// Common fields used by semantic search types
+struct SemanticCore {
+    semantic: Vec<u8>,
+}
+
+pub struct KeywordSearch<'a> {
+    core: SearchCore,
+    filter: Filter<'a>,
+    keyword: KeywordCore<'a>,
+}
+
+pub struct SemanticSearch {
+    core: SearchCore,
+    semantic: SemanticCore,
+}
+
+pub struct HybridSearch {
+    core: SearchCore,
+    keyword: KeywordCore,
+    semantic: SemanticCore,
+    semantic_ratio: f32,
+}
+```
+
+But this should be done with caution and not just the sake of removing duplicate field declaration. since there is now additional field indirection and the using such code likely become more brittle to change as new types and fields are added. The focus should be on the use case. Will such core indirection allow us to re-use code? The answer depends on the domain, but likely less so then one might imagine at the onset.
 
 **Benefits:**
-- Limits field duplication due to shared core
+- Limits field duplication due to shared cores
 - Limited boilerplate
 - Does not need a "common" trait, since it exists at the type level
 
@@ -249,6 +295,8 @@ pub enum Search<'a> {
 }
 ```
 
+This approach is the most "rustic". It remains flexible to change while being type safe without and the concerns are well separated. Unfortunately in practice, as the enum is passed around, the significant amount of branching inside functions results in a lot of boilerplate at the implementation level. Often requiring more closures/functions to avoid duplication inside the branches. It is common to implement getter and setter fields to avoid some of this boilerplate. Though a macro could definitely reduce this.
+
 **Benefits:**
 - Clean enum interface at the top level
 - Each search type is self-contained and complete
@@ -286,6 +334,8 @@ pub struct Search<'a> {
     kind: SearchKind
 }
 ```
+
+On first glance this may feel like the wrong solution. But in practice, this may be the most manageable and resilient to future change. There is minimal boilerplate/duplication and using the structure is straight forward field access. To know the kind, one can easily match on it. If you can get over the one large data structure and unwraps, it can be surprisingly pleasant to work with. This structure is ideal for rapid development and prototyping. Though as more and more fields are added, especially for newcomers to the code, it becomes harder to keep which exists for which kind in your head. Thus it can easily become unwieldly. Maybe not surprisingly this approach exists often in the wild as well.
 
 **Benefits:**
 
@@ -642,6 +692,8 @@ impl HasSemanticRatio for HybridSearch {
 }
 ```
 
+Approach 6 has the benefit over approach 1 since there is no need to decompose the struct to avoid function calling duplication, instead you define function signatures to take the required traits or combinations. Though there is a substantial amount of boilerplate at the initial onset and possibly every time you declare a function definition, and boxing values/casting comes with it's own set of drawbacks and pains to work with. A well constructed macro may be able to reduce this boilerplate.
+
 **Benefits:**
 - Maximum flexibility - can mix and match traits as needed for method implementations
 - No field duplication in the trait definitions
@@ -659,16 +711,4 @@ impl HasSemanticRatio for HybridSearch {
 
 There's no one-size-fits-all solution to data modeling in Rust. The choice depends on your specific requirements around type safety, flexibility, maintenance burden, and API design. Consider your domain's stability, the frequency of changes, and the complexity you're willing to accept in your codebase.
 
-# Discussion
-
-Approach 1 is often the go to and the simplest. If you can design your functions to take fields rather the single struct type, you can avoid most code duplication. Often in practice, this pure functional approach is not implemented and full types are passed around. This is partially because of the amount of api changes needed for adding a single variable and you'd likely still need an accompanying `Kind` type. Thus, this is often not the correct solution.
-
-I never go for approach 2 or 3 (Single common type). Since I've learned the hard way I'm not omnipotent, thus I cannot predict how the api will change in the future. Implementations using these two approaches tends to become the most wonky as more types are introduced and fields overlap some types but not all. If you tend to prefer one of these choices, I highly recommend considering approach 5 instead. As this follows the same abstraction concept, except is much more flexible to change.
-
-Approach 4 satisfies me the most conceptually. The concerns are well separated. Unfortunately in practice I've found as you pass around the enum the significant amount of branching inside functions results in a lot of boilerplate at the implementation level and I often need to write more closures/functions avoid duplication inside the branches. Often I end up even implementing common getter and setter fields to avoid some of this boilerplate. Though a macro could definitely reduce this.
-
-Approach 5 on first glance is gross. But in practice I've found it to be the most manageable for current implementations and resilient to future change. There is minimal boilerplate/duplication and using the structure is straight forward field access. If you need to know the kind, you can easily match on it. If you can get over the one large data structure and unwraps, it can be surprisingly pleasant to work with. Though especially for newcomers to the code, if you cannot keep which exists for which kind in your head it can easily become unwieldly. Maybe not surprisingly this approach exists often in the wild as well.
-
-Approach 6 has the benefit over approach 1 since there is no need to decompose the struct to avoid function calling duplication, instead you define function signatures to take the required traits or combinations. Though there is a substantial amount of boilerplate at the initial onset and possibly every time you declare a function definition, and boxing values/casting comes with it's own set of drawbacks and pains to work with. A well constructed macro may be able to reduce this boilerplate.
-
-Now which approach do I usually use? Personally I reach usually reach for 5. It allows me to prototype the fastest and get something done. If I am considering the long term viability of a project and know other individuals will look and work on the code. I may reach for 3, which is more of a rustic way.
+That said, typically approach 2 and 3 (Common types) should be avoided. Programmers are not omnipotent, thus they usually cannot predict how the api will change in the future. Implementations using these two approaches tends to become the most wonky as more types are introduced and fields overlap some types but not all. If these approaches seem like a good solution to a problem, consider approach 4 instead. As this follows the same core abstraction concept, except is much more flexible to change.
