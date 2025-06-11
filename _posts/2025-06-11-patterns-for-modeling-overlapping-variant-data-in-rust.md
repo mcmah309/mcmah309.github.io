@@ -2,7 +2,7 @@
 layout: post
 title: "Patterns for Modeling Overlapping Variant Data in Rust"
 # subtitle: ""
-date: 2025-06-12
+date: 2025-06-11
 categories: [technical]
 tags: [rust]
 # image:

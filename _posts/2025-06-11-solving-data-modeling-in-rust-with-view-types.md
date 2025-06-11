@@ -2,7 +2,7 @@
 layout: post
 title: "Solving Rust Data Modeling with View-Types: A Macro-Driven Approach"
 # subtitle: ""
-date: 2025-06-12
+date: 2025-06-11
 categories: [technical]
 tags: [rust]
 # image:
