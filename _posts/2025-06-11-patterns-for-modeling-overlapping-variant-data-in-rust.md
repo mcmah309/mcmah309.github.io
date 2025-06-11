@@ -722,4 +722,4 @@ Approach 6 has the benefit over approach 1 since there is no need to decompose t
 
 There's no one-size-fits-all solution to data modeling in Rust. The choice depends on your specific requirements around type safety, flexibility, maintenance burden, and API design. Consider your domain's stability, the frequency of changes, and the complexity you're willing to accept in your codebase.
 
-> Side: The [view-types](https://github.com/mcmah309/view-types) crate ([article]({% post_url 2025-06-11-solving-data-modeling-in-rust-with-view-types %})) was created to remove some of the boilerplate changes of these approaches.
+> Side: The [view-types](https://github.com/mcmah309/view-types) crate ([article]({% post_url 2025-06-11-solving-data-modeling-in-rust-with-view-types %})) was created to remove some of the boilerplate of these approaches.
