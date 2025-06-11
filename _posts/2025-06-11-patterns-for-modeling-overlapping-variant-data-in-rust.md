@@ -260,7 +260,7 @@ This approach suffers from the same core issue as Approach 2. The separation of 
 - Pattern matching may result in more code duplication across branches
 - Rigid separation becomes problematic - difficult to accommodate new types with different field combinations which often requires restructuring when the API evolves
 
-## Approach 4: Enum as Top Level with Complete Structs
+## Approach 4: Enum With Complete Structs
 
 This approach puts the enum at the top level, with each variant containing a complete struct:
 
