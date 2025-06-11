@@ -26,13 +26,13 @@ When building complex systems, we often need to model data that has overlapping 
 - **Semantic Search**: Needs vector embeddings and common fields
 - **Hybrid Search**: Needs most of keyword and semantic fields plus a ratio
 
-The six approaches discussed had benefits and drawbacks.
+The six approaches discussed had their own benefits and drawbacks.
 
 ## Enter View-Types: A Macro-Driven Solution
 
-The [view-types](https://github.com/mcmah309/view-types) crate was created to address some of the drawbacks of the previously discussed approaches. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. It generates the code to quickly implement [Approach 4][approach-4] (enum with complete structs) and [Approach 5][approach-5] (monolithic with kind), as well as associated structures and methods.
+The [view-types](https://github.com/mcmah309/view-types) crate was created to address some of the drawbacks of the previously discussed approaches. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. The macro generates the code to quickly implement [Approach 4][approach-4] (enum with complete structs) and [Approach 5][approach-5] (monolithic with kind), as well as associated structures and methods.
 
-To better understand how the macro works, information can be found in the [README](https://github.com/mcmah309/view-types).
+For detailed documentation on how the macro works, see the [README](https://github.com/mcmah309/view-types).
 
 ### Application
 
@@ -648,9 +648,9 @@ pub struct HybridSearch {
     semantic_ratio: f32,
 }
 ```
-Including `*Ref` and `*Mut` versions of each, as well as the methods to convert into these types (see full expansion for inclusion). This effectively allows implementing a monolith with kind approach [Approach 5][approach-5] with minimum boilerplate.
+with `*Ref` and `*Mut` versions of each, as well as the methods to convert into these types (see full expansion drop down above for inclusion). This effectively allows implementing a "monolith with kind approach" ([Approach 5][approach-5]) with minimum boilerplate.
 
-In addition to the previously mention generated code, code for [Approach 4][approach-4] is also generated.
+In addition to the previously mentioned generated code, code for "enum with complete structs" ([Approach 4][approach-4]) is also generated.
 ```rust
 pub enum SearchVariant<'a> {
     KeywordSearch(KeywordSearch<'a>),
@@ -737,13 +737,12 @@ impl<'a> SearchVariant<'a> {
     }
 }
 ```
-This effectively allows implementing a enum with complete structs ([Approach 5][approach-5]) with minimum boilerplate.
 
 ## Real World Examples
 
 For the [error_set](https://github.com/mcmah309/error_set) crate, internal error representations were implemented using [Approach 4][approach-4] by hand. By using `view-types`, almost all the boilerplate can be removed [PR](https://github.com/mcmah309/error_set/pull/30/files).
 
-As an example, for the same crate, the original hand written approach was replaced with [Approach 5][approach-5] and the `view-types` crate. Though since it was originally implemented with [Approach 4][approach-4], a few more code changes around the codebase were needed to implement [Approach 5][approach-5] - [PR](https://github.com/mcmah309/error_set/pull/28/files).
+As an example, for the same crate, the original hand written approach was replaced with [Approach 5][approach-5] and the `view-types` crate. However, since it was originally implemented with [Approach 4][approach-4], a few more code changes around the codebase were needed to implement [Approach 5][approach-5] - [PR](https://github.com/mcmah309/error_set/pull/28/files).
 
 ## Conclusion
 
