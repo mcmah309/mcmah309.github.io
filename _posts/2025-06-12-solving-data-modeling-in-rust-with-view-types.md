@@ -1,4 +1,20 @@
-# Solving Rust Data Modeling with View-Types: A Macro-Driven Approach
+---
+layout: post
+title: "Solving Rust Data Modeling with View-Types: A Macro-Driven Approach"
+# subtitle: ""
+date: 2025-06-12
+categories: [technical]
+tags: [rust]
+# image:
+#   path: /images/post-image.jpg
+#   thumbnail: /images/post-image-thumb.jpg
+#   caption: "Photo credit [Unsplash](https://unsplash.com/)"
+author:
+  name: "Dillon McMahon"
+#   picture: "/images/your-avatar.jpg"
+share: true
+comments: false
+---
 
 In the previous article, [Patterns for Modeling Variant Data in Rust](link-to-previous-article), six different approaches to modeling overlapping data structures were explored, each with their own trade-offs between type safety, code duplication, and API flexibility. Today, I want to introduce a solution that addresses many of these challenges: the `view-types` macro.
 
