@@ -49,7 +49,7 @@ pub struct Search<'a> {
 }
 ```
 
-This monolithic approach works but has obvious problems: fields that don't apply to certain search types are still present, making the API confusing and potentially error-prone. For the moment, ignoring how this type is configured (usually all at once or through a builder pattern), consider we just need to be able to execute a search, knowing that some common fields require common configuration / execution paths, while others may depend on the type of search being performed. How should we model this data such that we avoid unnecessary code duplication and remain flexible to new search configurations, while maintaining a clean understandable api?
+This monolithic approach works but has obvious problems: fields that don't apply to certain search types are still present, making the API confusing and potentially error-prone. For the moment, ignoring how this type is configured (usually all at once or through a builder pattern), consider we just need to be able to execute a search, knowing that some common fields require common configuration / execution paths, while others may depend on the type of search being performed. How should we model this data such that we avoid unnecessary code duplication and remain flexible to new search types, while maintaining a clean understandable api?
 
 > Side: It it worth highlighting that often code duplication is not in itself bad and often necessary. It should never be avoided just for the sake of avoiding duplicated code. Too much abstraction for this sake is often itself brittle. As a general rule, the more you duplicate code, the more contextually large your program becomes and you have to write, while the more abstraction you introduce, the more complex your code becomes. For changes related to foreseen feature additions, duplicate code often results in changing a larger surface area of your code and abstraction often results in changes being easier to implement. For changes related to unforeseen feature additions, duplicate code often results in changing a larger surface area of your code and abstraction often results in changes being harder to implement.
 
@@ -92,7 +92,7 @@ pub struct HybridSearch {
 }
 ```
 
-This often the go to and the simplest. Though it may result in the most code duplication. But if functions can be designed to take fields rather the single struct type, most code duplication can be avoided. Unfortunately often in practice, this pure functional approach is not implemented and full types are passed around. This is partially because of the amount of api changes needed for adding a single variable. Though such an implementation may still need an accompanying `Kind` type to be passed around. Thus, this is often not the best solution.
+This often the go-to and the simplest, though it may result in the most code duplication. But if functions can be designed to take fields rather than the single struct type, most code duplication can be avoided. Unfortunately often in practice, this pure functional approach is not implemented and full types are passed around. This is partially because of the amount of api changes needed for adding a single variable. Though such an implementation may still need an accompanying `Kind` type to be passed around. Thus, this is often not the best solution.
 
 **Benefits:**
 
@@ -187,7 +187,7 @@ pub struct HybridSearch {
 }
 ```
 
-But this should be done with caution and not just for the sake of removing duplicate field declaration. since there is now additional field indirection and the using such code likely become more brittle to change as new types and fields are added. The focus should be on the use case. Will such core indirection allow us to re-use code? The answer depends on the domain, but likely less so then one might imagine at the onset.
+But this should be done with caution and not just for the sake of removing duplicate field declaration. since there is now additional field indirection and using such code will likely become more brittle to change as new types and fields are added. The focus should be on the use case. Will such core indirection allow us to re-use code? The answer depends on the domain, but likely less so than one might imagine at the onset.
 
 **A Critical Limitation:**
 While this approach initially appears clean, it tends to become problematic as APIs evolve. Programmers cannot predict how the API will change in the future, and this approach becomes particularly unwieldy when new search types are introduced that share fields with some existing types but not others. The rigid core structure makes it difficult to accommodate these partial overlaps without creating awkward intermediate types or duplicating fields anyway.
@@ -364,7 +364,7 @@ On first glance this may feel like the wrong solution. But in practice, this may
 
 ## Approach 6: Trait-Based Composition
 
-This approach does not rely on the structure of the backing data, but instead relies on the ability to get the backing data through traits. For the sake of example, traits are provided for individual fields, but grouping are common as well, and the structure of the backing data is the same as approach 1. These traits can be used when you need to reuse functions for each type.
+This approach does not rely on the structure of the backing data, but instead relies on the ability to get the backing data through traits. For the sake of example, traits are provided for individual fields, but grouping is common as well, and the structure of the backing data is the same as approach 1. These traits can be used when you need to reuse functions for each type.
 
 ```rust
 // Concrete struct implementations
