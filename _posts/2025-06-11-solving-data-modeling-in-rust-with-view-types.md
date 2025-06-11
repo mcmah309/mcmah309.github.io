@@ -102,7 +102,7 @@ pub struct Search<'a> {
 // }
 ```
 
-<details>
+<details  markdown="1">
 <summary>Macro Expansion</summary>
 
 ```rust
