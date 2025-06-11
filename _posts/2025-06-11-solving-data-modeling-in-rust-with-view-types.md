@@ -16,7 +16,7 @@ share: true
 comments: false
 ---
 
-In the previous article, [Patterns for Modeling Variant Data in Rust]({% post_url 2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust %}), six different approaches to modeling overlapping data structures were explored, each with their own trade-offs between type safety, code duplication, and API flexibility. Today, I want to introduce a solution that addresses many of these challenges: the `view-types` macro.
+In the previous article, [Patterns for Modeling Overlapping Variant Data in Rust]({% post_url 2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust %}), six different approaches to modeling overlapping data structures were explored, each with their own trade-offs between type safety, code duplication, and API flexibility. Today, I want to introduce a solution that addresses many of these challenges: the [view-types](https://github.com/mcmah309/view-types) macro.
 
 ## Recap: The Challenge
 
@@ -30,7 +30,9 @@ The six approaches discussed had benefits and drawbacks.
 
 ## Enter View-Types: A Macro-Driven Solution
 
-The [view-types](https://github.com/mcmah309/view-types) was created to address some of the drawbacks. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. It generates the code to quickly implement **Approach 4** (enum with complete structs) and **Approach 5** (monolithic with kind) while eliminating their major drawbacks.
+The [view-types](https://github.com/mcmah309/view-types) was created to address some of the drawbacks of the previously discussed approaches. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. It generates the code to quickly implement **Approach 4** (enum with complete structs) and **Approach 5** (monolithic with kind), as well as associated structures and methods.
+
+To better understand how the macro works, information can be found in the [README](https://github.com/mcmah309/view-types).
 
 ### Application
 
@@ -99,6 +101,517 @@ pub struct Search<'a> {
 //     Hybrid,
 // }
 ```
+
+<details>
+<summary>Macro Expansion</summary>
+
+```rust
+// Recursive expansion of views macro
+// ===================================
+
+pub struct Search<'a> {
+    query: Option<String>,
+    filter: Option<Filter<'a>>,
+    offset: usize,
+    limit: usize,
+    time_budget: TimeBudget,
+    ranking_score_threshold: Option<f64>,
+    terms_matching_strategy: TermsMatchingStrategy,
+    scoring_strategy: ScoringStrategy,
+    locales: Option<Vec<Language>>,
+    semantic: Option<Vec<u8>>,
+    semantic_ratio: Option<f32>,
+}
+pub struct KeywordSearch<'a> {
+    offset: usize,
+    limit: usize,
+    time_budget: TimeBudget,
+    ranking_score_threshold: Option<f64>,
+    query: String,
+    terms_matching_strategy: TermsMatchingStrategy,
+    scoring_strategy: ScoringStrategy,
+    locales: Option<Vec<Language>>,
+    filter: Filter<'a>,
+}
+pub struct KeywordSearchRef<'original, 'a> {
+    offset: &'original usize,
+    limit: &'original usize,
+    time_budget: &'original TimeBudget,
+    ranking_score_threshold: &'original Option<f64>,
+    query: &'original String,
+    terms_matching_strategy: &'original TermsMatchingStrategy,
+    scoring_strategy: &'original ScoringStrategy,
+    locales: &'original Option<Vec<Language>>,
+    filter: &'original Filter<'a>,
+}
+pub struct KeywordSearchMut<'original, 'a> {
+    offset: &'original mut usize,
+    limit: &'original mut usize,
+    time_budget: &'original mut TimeBudget,
+    ranking_score_threshold: &'original mut Option<f64>,
+    query: &'original mut String,
+    terms_matching_strategy: &'original mut TermsMatchingStrategy,
+    scoring_strategy: &'original mut ScoringStrategy,
+    locales: &'original mut Option<Vec<Language>>,
+    filter: &'original mut Filter<'a>,
+}
+impl<'original, 'a> KeywordSearch<'a> {
+    pub fn as_ref(&'original self) -> KeywordSearchRef<'original, 'a> {
+        KeywordSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            query: &self.query,
+            terms_matching_strategy: &self.terms_matching_strategy,
+            scoring_strategy: &self.scoring_strategy,
+            locales: &self.locales,
+            filter: &self.filter,
+        }
+    }
+    pub fn as_mut(&'original mut self) -> KeywordSearchMut<'original, 'a> {
+        KeywordSearchMut {
+            offset: &mut self.offset,
+            limit: &mut self.limit,
+            time_budget: &mut self.time_budget,
+            ranking_score_threshold: &mut self.ranking_score_threshold,
+            query: &mut self.query,
+            terms_matching_strategy: &mut self.terms_matching_strategy,
+            scoring_strategy: &mut self.scoring_strategy,
+            locales: &mut self.locales,
+            filter: &mut self.filter,
+        }
+    }
+}
+pub struct SemanticSearch {
+    offset: usize,
+    limit: usize,
+    time_budget: TimeBudget,
+    ranking_score_threshold: Option<f64>,
+    semantic: Vec<u8>,
+}
+pub struct SemanticSearchRef<'original> {
+    offset: &'original usize,
+    limit: &'original usize,
+    time_budget: &'original TimeBudget,
+    ranking_score_threshold: &'original Option<f64>,
+    semantic: &'original Vec<u8>,
+}
+pub struct SemanticSearchMut<'original> {
+    offset: &'original mut usize,
+    limit: &'original mut usize,
+    time_budget: &'original mut TimeBudget,
+    ranking_score_threshold: &'original mut Option<f64>,
+    semantic: &'original mut Vec<u8>,
+}
+impl<'original> SemanticSearch {
+    pub fn as_ref(&'original self) -> SemanticSearchRef<'original> {
+        SemanticSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            semantic: &self.semantic,
+        }
+    }
+    pub fn as_mut(&'original mut self) -> SemanticSearchMut<'original> {
+        SemanticSearchMut {
+            offset: &mut self.offset,
+            limit: &mut self.limit,
+            time_budget: &mut self.time_budget,
+            ranking_score_threshold: &mut self.ranking_score_threshold,
+            semantic: &mut self.semantic,
+        }
+    }
+}
+pub struct HybridSearch {
+    offset: usize,
+    limit: usize,
+    time_budget: TimeBudget,
+    ranking_score_threshold: Option<f64>,
+    query: String,
+    terms_matching_strategy: TermsMatchingStrategy,
+    scoring_strategy: ScoringStrategy,
+    locales: Option<Vec<Language>>,
+    semantic: Vec<u8>,
+    semantic_ratio: f32,
+}
+pub struct HybridSearchRef<'original> {
+    offset: &'original usize,
+    limit: &'original usize,
+    time_budget: &'original TimeBudget,
+    ranking_score_threshold: &'original Option<f64>,
+    query: &'original String,
+    terms_matching_strategy: &'original TermsMatchingStrategy,
+    scoring_strategy: &'original ScoringStrategy,
+    locales: &'original Option<Vec<Language>>,
+    semantic: &'original Vec<u8>,
+    semantic_ratio: &'original f32,
+}
+pub struct HybridSearchMut<'original> {
+    offset: &'original mut usize,
+    limit: &'original mut usize,
+    time_budget: &'original mut TimeBudget,
+    ranking_score_threshold: &'original mut Option<f64>,
+    query: &'original mut String,
+    terms_matching_strategy: &'original mut TermsMatchingStrategy,
+    scoring_strategy: &'original mut ScoringStrategy,
+    locales: &'original mut Option<Vec<Language>>,
+    semantic: &'original mut Vec<u8>,
+    semantic_ratio: &'original mut f32,
+}
+impl<'original> HybridSearch {
+    pub fn as_ref(&'original self) -> HybridSearchRef<'original> {
+        HybridSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            query: &self.query,
+            terms_matching_strategy: &self.terms_matching_strategy,
+            scoring_strategy: &self.scoring_strategy,
+            locales: &self.locales,
+            semantic: &self.semantic,
+            semantic_ratio: &self.semantic_ratio,
+        }
+    }
+    pub fn as_mut(&'original mut self) -> HybridSearchMut<'original> {
+        HybridSearchMut {
+            offset: &mut self.offset,
+            limit: &mut self.limit,
+            time_budget: &mut self.time_budget,
+            ranking_score_threshold: &mut self.ranking_score_threshold,
+            query: &mut self.query,
+            terms_matching_strategy: &mut self.terms_matching_strategy,
+            scoring_strategy: &mut self.scoring_strategy,
+            locales: &mut self.locales,
+            semantic: &mut self.semantic,
+            semantic_ratio: &mut self.semantic_ratio,
+        }
+    }
+}
+pub enum SearchVariant<'a> {
+    KeywordSearch(KeywordSearch<'a>),
+    SemanticSearch(SemanticSearch),
+    HybridSearch(HybridSearch),
+}
+impl<'a> SearchVariant<'a> {
+    pub fn ranking_score_threshold(&self) -> Option<&f64> {
+        match self {
+            SearchVariant::KeywordSearch(view) => view.ranking_score_threshold.as_ref(),
+            SearchVariant::SemanticSearch(view) => view.ranking_score_threshold.as_ref(),
+            SearchVariant::HybridSearch(view) => view.ranking_score_threshold.as_ref(),
+            _ => None,
+        }
+    }
+    pub fn locales(&self) -> Option<&Vec<Language>> {
+        match self {
+            SearchVariant::KeywordSearch(view) => view.locales.as_ref(),
+            SearchVariant::HybridSearch(view) => view.locales.as_ref(),
+            _ => None,
+        }
+    }
+    pub fn time_budget(&self) -> &TimeBudget {
+        match self {
+            SearchVariant::KeywordSearch(view) => &view.time_budget,
+            SearchVariant::SemanticSearch(view) => &view.time_budget,
+            SearchVariant::HybridSearch(view) => &view.time_budget,
+        }
+    }
+    pub fn filter(&self) -> Option<&Filter<'a>> {
+        match self {
+            SearchVariant::KeywordSearch(view) => Some(&view.filter),
+            _ => None,
+        }
+    }
+    pub fn semantic_ratio(&self) -> Option<&f32> {
+        match self {
+            SearchVariant::HybridSearch(view) => Some(&view.semantic_ratio),
+            _ => None,
+        }
+    }
+    pub fn limit(&self) -> &usize {
+        match self {
+            SearchVariant::KeywordSearch(view) => &view.limit,
+            SearchVariant::SemanticSearch(view) => &view.limit,
+            SearchVariant::HybridSearch(view) => &view.limit,
+        }
+    }
+    pub fn query(&self) -> Option<&String> {
+        match self {
+            SearchVariant::KeywordSearch(view) => Some(&view.query),
+            SearchVariant::HybridSearch(view) => Some(&view.query),
+            _ => None,
+        }
+    }
+    pub fn terms_matching_strategy(&self) -> Option<&TermsMatchingStrategy> {
+        match self {
+            SearchVariant::KeywordSearch(view) => Some(&view.terms_matching_strategy),
+            SearchVariant::HybridSearch(view) => Some(&view.terms_matching_strategy),
+            _ => None,
+        }
+    }
+    pub fn scoring_strategy(&self) -> Option<&ScoringStrategy> {
+        match self {
+            SearchVariant::KeywordSearch(view) => Some(&view.scoring_strategy),
+            SearchVariant::HybridSearch(view) => Some(&view.scoring_strategy),
+            _ => None,
+        }
+    }
+    pub fn semantic(&self) -> Option<&Vec<u8>> {
+        match self {
+            SearchVariant::SemanticSearch(view) => Some(&view.semantic),
+            SearchVariant::HybridSearch(view) => Some(&view.semantic),
+            _ => None,
+        }
+    }
+    pub fn offset(&self) -> &usize {
+        match self {
+            SearchVariant::KeywordSearch(view) => &view.offset,
+            SearchVariant::SemanticSearch(view) => &view.offset,
+            SearchVariant::HybridSearch(view) => &view.offset,
+        }
+    }
+}
+impl<'original, 'a> Search<'a> {
+    pub fn into_keyword_search(self) -> Option<KeywordSearch<'a>> {
+        Some(KeywordSearch {
+            offset: self.offset,
+            limit: self.limit,
+            time_budget: self.time_budget,
+            ranking_score_threshold: self.ranking_score_threshold,
+            query: if let Some(query) = self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: self.terms_matching_strategy,
+            scoring_strategy: self.scoring_strategy,
+            locales: self.locales,
+            filter: if let Some(filter) = self.filter {
+                filter
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_keyword_search(&'original self) -> Option<KeywordSearchRef<'original, 'a>> {
+        Some(KeywordSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            query: if let Some(query) = &self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: &self.terms_matching_strategy,
+            scoring_strategy: &self.scoring_strategy,
+            locales: &self.locales,
+            filter: if let Some(filter) = &self.filter {
+                filter
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_keyword_search_mut(&'original mut self) -> Option<KeywordSearchMut<'original, 'a>> {
+        Some(KeywordSearchMut {
+            offset: {
+                let offset = &mut self.offset;
+                offset
+            },
+            limit: {
+                let limit = &mut self.limit;
+                limit
+            },
+            time_budget: {
+                let time_budget = &mut self.time_budget;
+                time_budget
+            },
+            ranking_score_threshold: {
+                let ranking_score_threshold = &mut self.ranking_score_threshold;
+                ranking_score_threshold
+            },
+            query: if let Some(query) = &mut self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: {
+                let terms_matching_strategy = &mut self.terms_matching_strategy;
+                terms_matching_strategy
+            },
+            scoring_strategy: {
+                let scoring_strategy = &mut self.scoring_strategy;
+                scoring_strategy
+            },
+            locales: {
+                let locales = &mut self.locales;
+                locales
+            },
+            filter: if let Some(filter) = &mut self.filter {
+                filter
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn into_semantic_search(self) -> Option<SemanticSearch> {
+        Some(SemanticSearch {
+            offset: self.offset,
+            limit: self.limit,
+            time_budget: self.time_budget,
+            ranking_score_threshold: self.ranking_score_threshold,
+            semantic: if let Some(semantic) = self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_semantic_search(&'original self) -> Option<SemanticSearchRef<'original>> {
+        Some(SemanticSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            semantic: if let Some(semantic) = &self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_semantic_search_mut(&'original mut self) -> Option<SemanticSearchMut<'original>> {
+        Some(SemanticSearchMut {
+            offset: {
+                let offset = &mut self.offset;
+                offset
+            },
+            limit: {
+                let limit = &mut self.limit;
+                limit
+            },
+            time_budget: {
+                let time_budget = &mut self.time_budget;
+                time_budget
+            },
+            ranking_score_threshold: {
+                let ranking_score_threshold = &mut self.ranking_score_threshold;
+                ranking_score_threshold
+            },
+            semantic: if let Some(semantic) = &mut self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn into_hybrid_search(self) -> Option<HybridSearch> {
+        Some(HybridSearch {
+            offset: self.offset,
+            limit: self.limit,
+            time_budget: self.time_budget,
+            ranking_score_threshold: self.ranking_score_threshold,
+            query: if let Some(query) = self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: self.terms_matching_strategy,
+            scoring_strategy: self.scoring_strategy,
+            locales: self.locales,
+            semantic: if let Some(semantic) = self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+            semantic_ratio: if let Some(semantic_ratio) = self.semantic_ratio {
+                semantic_ratio
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_hybrid_search(&'original self) -> Option<HybridSearchRef<'original>> {
+        Some(HybridSearchRef {
+            offset: &self.offset,
+            limit: &self.limit,
+            time_budget: &self.time_budget,
+            ranking_score_threshold: &self.ranking_score_threshold,
+            query: if let Some(query) = &self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: &self.terms_matching_strategy,
+            scoring_strategy: &self.scoring_strategy,
+            locales: &self.locales,
+            semantic: if let Some(semantic) = &self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+            semantic_ratio: if let Some(semantic_ratio) = &self.semantic_ratio {
+                semantic_ratio
+            } else {
+                return None;
+            },
+        })
+    }
+    pub fn as_hybrid_search_mut(&'original mut self) -> Option<HybridSearchMut<'original>> {
+        Some(HybridSearchMut {
+            offset: {
+                let offset = &mut self.offset;
+                offset
+            },
+            limit: {
+                let limit = &mut self.limit;
+                limit
+            },
+            time_budget: {
+                let time_budget = &mut self.time_budget;
+                time_budget
+            },
+            ranking_score_threshold: {
+                let ranking_score_threshold = &mut self.ranking_score_threshold;
+                ranking_score_threshold
+            },
+            query: if let Some(query) = &mut self.query {
+                query
+            } else {
+                return None;
+            },
+            terms_matching_strategy: {
+                let terms_matching_strategy = &mut self.terms_matching_strategy;
+                terms_matching_strategy
+            },
+            scoring_strategy: {
+                let scoring_strategy = &mut self.scoring_strategy;
+                scoring_strategy
+            },
+            locales: {
+                let locales = &mut self.locales;
+                locales
+            },
+            semantic: if let Some(semantic) = &mut self.semantic {
+                semantic
+            } else {
+                return None;
+            },
+            semantic_ratio: if let Some(semantic_ratio) = &mut self.semantic_ratio {
+                semantic_ratio
+            } else {
+                return None;
+            },
+        })
+    }
+}
+```
+
+</details>
 
 Included in the generated code is
 ```rust
@@ -228,5 +741,8 @@ This effectively allows implementing a enum with complete structs (**Approach 5*
 
 ## Conclusion
 
+The `view-types` macro solves the data modeling challenges outlined in the previous article by generating boilerplate for both **Approach 4** (enum with complete structs) and **Approach 5** (monolithic with kind). This provides flexibility to choose your preferred API style without sacrificing type safety or maintainability.
+
+The macro delivers zero code duplication, compile-time type safety, API flexibility, and easy maintenance when adding new fields or views. It excels for complex data structures with overlapping field requirements that may evolve over time. `view-types` transforming challenging data modeling into straightforward declarations of intent.
 
 *The view-types crate is available on [crates.io](https://crates.io/crates/view-types) and the source code can be found on [GitHub](https://github.com/mcmah309/view-types).*
