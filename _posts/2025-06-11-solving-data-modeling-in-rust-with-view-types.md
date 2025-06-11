@@ -30,7 +30,7 @@ The six approaches discussed had benefits and drawbacks.
 
 ## Enter View-Types: A Macro-Driven Solution
 
-The [view-types](https://github.com/mcmah309/view-types) was created to address some of the drawbacks of the previously discussed approaches. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. It generates the code to quickly implement [Approach 4](approach-4) (enum with complete structs) and [Approach 5](approach-5) (monolithic with kind), as well as associated structures and methods.
+The [view-types](https://github.com/mcmah309/view-types) was created to address some of the drawbacks of the previously discussed approaches. The crate provides a `views` macro for a declarative way to solve this problem by generating type-safe projections from a single source-of-truth data structure. It generates the code to quickly implement [Approach 4][approach-4] (enum with complete structs) and [Approach 5][approach-5] (monolithic with kind), as well as associated structures and methods.
 
 To better understand how the macro works, information can be found in the [README](https://github.com/mcmah309/view-types).
 
@@ -648,9 +648,9 @@ pub struct HybridSearch {
     semantic_ratio: f32,
 }
 ```
-Including `*Ref` and `*Mut` versions of each, as well as the methods to convert into these types (see full expansion for inclusion). This effectively allows implementing a monolith with kind approach [Approach 5](approach-5) with minimum boilerplate.
+Including `*Ref` and `*Mut` versions of each, as well as the methods to convert into these types (see full expansion for inclusion). This effectively allows implementing a monolith with kind approach [Approach 5][approach-5] with minimum boilerplate.
 
-In addition to the previously mention generated code, code for [Approach 4](approach-4) is also generated.
+In addition to the previously mention generated code, code for [Approach 4][approach-4] is also generated.
 ```rust
 pub enum SearchVariant<'a> {
     KeywordSearch(KeywordSearch<'a>),
@@ -737,17 +737,17 @@ impl<'a> SearchVariant<'a> {
     }
 }
 ```
-This effectively allows implementing a enum with complete structs ([Approach 5](approach-5)) with minimum boilerplate.
+This effectively allows implementing a enum with complete structs ([Approach 5][approach-5]) with minimum boilerplate.
 
 ## Real World Example
 
-I have previously implement [Approach 4](approach-4) by hand for handling different error representations in the [error_set]() crate. Using `view-types` almost all the boilerplate can be removed [PR](https://github.com/mcmah309/error_set/pull/30/files)
+I have previously implement [Approach 4][approach-4] by hand for handling different error representations in the [error_set]() crate. Using `view-types` almost all the boilerplate can be removed [PR](https://github.com/mcmah309/error_set/pull/30/files)
 
-For a proof of concept, I also replaced the hand written [Approach 4](approach-4) with [Approach 5](approach-5) with using the `view-types` crate. Though since it was originally implemented with [Approach 4](approach-4), a few more code changes around the code base were needed to implement [Approach 5](approach-5) - [PR](https://github.com/mcmah309/error_set/pull/28/files)
+For a proof of concept, I also replaced the hand written [Approach 4][approach-4] with [Approach 5][approach-5] with using the `view-types` crate. Though since it was originally implemented with [Approach 4][approach-4], a few more code changes around the code base were needed to implement [Approach 5][approach-5] - [PR](https://github.com/mcmah309/error_set/pull/28/files)
 
 ## Conclusion
 
-The `view-types` macro solves the data modeling challenges outlined in the previous article by generating boilerplate for both [Approach 4](approach-4) (enum with complete structs) and [Approach 5](approach-5) (monolithic with kind). This provides flexibility to choose your preferred API style without sacrificing type safety or maintainability.
+The `view-types` macro solves the data modeling challenges outlined in the previous article by generating boilerplate for both [Approach 4][approach-4] (enum with complete structs) and [Approach 5][approach-5] (monolithic with kind). This provides flexibility to choose your preferred API style without sacrificing type safety or maintainability.
 
 The macro delivers zero code duplication, compile-time type safety, API flexibility, and easy maintenance when adding new fields or views. It excels for complex data structures with overlapping field requirements that may evolve over time. `view-types` transforming challenging data modeling into straightforward declarations of intent.
 
