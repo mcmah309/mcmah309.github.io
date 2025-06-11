@@ -16,7 +16,7 @@ share: true
 comments: false
 ---
 
-In the previous article, [Patterns for Modeling Variant Data in Rust](link-to-previous-article), six different approaches to modeling overlapping data structures were explored, each with their own trade-offs between type safety, code duplication, and API flexibility. Today, I want to introduce a solution that addresses many of these challenges: the `view-types` macro.
+In the previous article, [Patterns for Modeling Variant Data in Rust]({% post_url 2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust %}), six different approaches to modeling overlapping data structures were explored, each with their own trade-offs between type safety, code duplication, and API flexibility. Today, I want to introduce a solution that addresses many of these challenges: the `view-types` macro.
 
 ## Recap: The Challenge
 
