@@ -16,32 +16,32 @@ share: true
 comments: false
 ---
 
-One of the reason I considered picking bun over deno was [bun shell](https://bun.sh/docs/runtime/shell). Bun shell allows one to write cross-platform JavaScript & TypeScript scripts with bash-like interop. Bun shell has a growing set of built in commands:
-`cd`, `ls`, `rm`, `echo`, `pwd`, `bun`, `cat`, `touch`, `mkdir`, `which`, `mv`, `exit`, `true`, `false`, `yes`, `seq`, `dirname`, `basename`. When these are encountered in a statement like ``` $`echo hi` ``` a cross platform execution is used. If a command is not recognized, like ``` $`sd world planet helloWorld.ts` ```, the local system command is executed. This allows for writing simple cross platform scripts and breaking out when needed.
+One reason I considered picking bun over deno was [bun shell](https://bun.sh/docs/runtime/shell). Bun shell allows one to write cross-platform JavaScript & TypeScript scripts with bash-like interop. Bun shell has a growing set of built in commands:
+`cd`, `ls`, `rm`, `echo`, `pwd`, `bun`, `cat`, `touch`, `mkdir`, `which`, `mv`, `exit`, `true`, `false`, `yes`, `seq`, `dirname`, `basename`. When these are encountered in a statement like ``` $`echo hi` ``` a cross-platform execution is used. If a command is not recognized, like ``` $`sd world planet helloWorld.ts` ```, the local system command is executed. This allows for writing simple cross-platform scripts and breaking out when needed.
 
-A bun script on linux looks like the following 
+A bun script on Linux looks like the following 
 ```ts
 #!/usr/bin/env bun
 import { $ } from "bun";
 
 await $`echo hi`;
 ```
-executed with `./<SCRIPT_NAME`.
+executed with `./<SCRIPT_NAME>`.
 
 It is worth noting, cross-platform commands can always be bypassed with `sh -c <command>`.
 
 ## The Deno Alternative
 
-Bun shell was actually inspired by [dax](https://github.com/dsherret/dax), which in turn was inspired by [zx](https://github.com/google/zx). With dax, the same functionality can be accomplished with deno, though not as widely publicized. dax has many of the same built in commands: `cd`, `echo`, `exit`, `cp`, `mv`, `rm`, `mkdir`, `pwd`, `sleep`, `test`, `touch`, `unset`, `cat`, `printenv`, `which`.
+Bun shell was actually inspired by [dax](https://github.com/dsherret/dax), which in turn was inspired by [zx](https://github.com/google/zx). With dax, the same functionality can be accomplished with deno, though not as widely publicized. dax has many of the same built-in commands: `cd`, `echo`, `exit`, `cp`, `mv`, `rm`, `mkdir`, `pwd`, `sleep`, `test`, `touch`, `unset`, `cat`, `printenv`, `which`.
 
-A deno script on linux looks like the following
+A deno script on Linux looks like the following
 ```ts
 #!/usr/bin/env -S deno run --allow-all --no-lock
 import $ from "jsr:@david/dax";
 
 await $`echo hi`;
 ```
-executed with `./<SCRIPT_NAME`.
+executed with `./<SCRIPT_NAME>`.
 
 ## Conclusion
 
