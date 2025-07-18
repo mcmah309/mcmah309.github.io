@@ -15,7 +15,6 @@ author:
 share: true
 comments: false
 ---
-# Bun Has Bun Shell But So Does Deno
 
 One of the reason I considered picking bun over deno was [bun shell](https://bun.sh/docs/runtime/shell). Bun shell allows one to write cross-platform JavaScript & TypeScript scripts with bash-like interop. Bun shell has a growing set of built in commands:
 `cd`, `ls`, `rm`, `echo`, `pwd`, `bun`, `cat`, `touch`, `mkdir`, `which`, `mv`, `exit`, `true`, `false`, `yes`, `seq`, `dirname`, `basename`. When these are encountered in a statement like ``` $`echo hi` ``` a cross platform execution is used. If a command is not recognized, like ``` $`sd world planet helloWorld.ts` ```, the local system command is executed. This allows for writing simple cross platform scripts and breaking out when needed.
