@@ -1,6 +1,6 @@
 base_url = "https://mcmah309.github.io"
 title = "mcmah309 Blog"
-description = "Notes on Rust, software, and open source"
+description = "Notes on software and open source"
 default_language = "en"
 compile_sass = false
 build_search_index = true
