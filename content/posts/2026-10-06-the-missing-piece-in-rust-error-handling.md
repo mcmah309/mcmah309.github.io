@@ -39,7 +39,7 @@ fn load_port(path: &str) -> Result<u16, PortError> {
 
 Now load a host address, bind a socket, and initialize a database. Each operation has its own errors. We can wrap those enums in another enum, flatten their variants into a new enum, or give everything one large crate-wide error type. The first approach creates nesting, the second creates conversions, and the third means functions advertise errors they cannot actually return. An I/O error may also end up in several different nested variants, making handling it at a higher level unnecessarily awkward.
 
-Alternatively, [anyhow](https://github.com/dtolnay/anyhow) makes propagation and attaching context straightforward. We can downcast when we need to inspect a concrete error. However, the function signature no longer tells us which error types are possible, and the compiler cannot track whether we have handled all of them.
+Alternatively, an [anyhow](https://github.com/dtolnay/anyhow) like approach makes propagation and attaching context straightforward. We can downcast when we need to inspect a concrete error. However, the function signature no longer tells us which error types are possible, and the compiler cannot track whether we have handled all of them.
 
 The usual advice is to use typed errors in libraries and opaque errors in applications. But applications need typed recovery too, and libraries often contain internal operations whose callers only need to propagate a failure. The useful distinction is whether a caller needs to **do something different based on the error type**.
 
@@ -192,7 +192,7 @@ The type tells us which recovery policy to apply. The context tells us what happ
 
 I previously explored precise error sets with [error_set](@/posts/2024-04-08-introducing-error-set.md). What still interests me is how little needs to change about Rust's existing error handling to make this work. We still return `Result`, propagate with `?`, and handle errors as values. The missing piece is making the possible errors easy to compose and reduce as they move through the program.
 
-This is why I think Rust's error handling is near perfect with the right constructs. Each function can describe the errors its callers need to reason about. We can handle those errors where there is a useful policy, simplify the signature where there is not, and keep the operational context needed to understand a failure. Precise error handling becomes much easier to use when it follows the way we already compose functions.
+This is why I think Rust's error handling is near perfect with the right constructs. Each function can describe the errors its callers need to reason about. We can handle those errors where there is a useful policy, simplify the signature where there is not, and keep the operational context needed to understand a failure. Precise error handling becomes much easier to use when it follows the way we already compose functions. That is why eros lets me love error handling—pun intended.
 
 *The eros source and README are available on [GitHub](https://github.com/mcmah309/eros).*
 
