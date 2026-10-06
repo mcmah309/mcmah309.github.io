@@ -6,7 +6,7 @@
 {% block settings %}{% endblock settings %}
 <!DOCTYPE html>
 <!-- So Simple 3.2.0, Copyright 2013-2019 Michael Rose. MIT license; ported to Zola. -->
-<html lang="en-US" class="no-js">
+<html lang="en-US">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,7 +23,7 @@
   <meta property="og:url" content="{{ current_url }}">
   {% if page and page.date %}<meta property="article:published_time" content="{{ page.date }}">{% endif %}
   <link rel="canonical" href="{{ current_url }}">
-  <script>if ('querySelector' in document && 'addEventListener' in window) { document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js'; }</script>
+  <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/skins/default.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
@@ -42,7 +42,7 @@
     </ul>
   </nav>
   <div class="navigation-wrapper">
-    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <button type="button" id="menu-toggle" aria-controls="primary-nav" aria-expanded="false">Menu</button>
     <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{% endfor %}</ul></nav>
   </div>
   <header class="masthead"><div class="wrap">
@@ -59,8 +59,7 @@
     <div class="social-icons"><a class="social-icon" href="https://github.com/mcmah309"><i class="fab fa-github-square fa-2x" title="GitHub"></i></a></div>
     <div class="copyright"><p>&copy; {{ now() | date(format="%Y") }} {{ config.title }}. Powered by <a href="https://www.getzola.org" rel="nofollow">Zola</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p></div>
   </footer>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-  <script src="/assets/js/main.min.js"></script>
+  <script src="/assets/js/navigation.js"></script>
   <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
   {% block scripts %}{% endblock scripts %}
 </body>

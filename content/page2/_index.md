@@ -1,6 +1,4 @@
 +++
-template = "index.html"
+redirect_to = "page/2/"
 in_search_index = false
-[extra]
-page_number = 2
 +++

@@ -942,20 +942,28 @@ th {
   list-style: none; }
 
 #menu-toggle {
-  display: block;
+  display: none;
+  width: 100%;
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
   margin: 0;
   padding: 0.25em 0.75em 0.5em;
   text-transform: uppercase;
   text-decoration: none;
   text-align: center; }
+  .js #menu-toggle {
+    display: block; }
   @media (min-width: 48em) {
-    #menu-toggle {
+    .js #menu-toggle {
       display: none; } }
 
 .site-nav {
-  display: none;
+  display: block;
   margin-bottom: 1em;
   text-align: center; }
+  .js .site-nav {
+    display: none; }
   .site-nav ul {
     display: block;
     margin: 0;
@@ -976,9 +984,9 @@ th {
     border: 1px solid;
     border-radius: 0.25rem; }
   @media (min-width: 48em) {
-    .site-nav {
+    .js .site-nav {
       display: block; } }
-  .site-nav.js-menu-is-open {
+  .js .site-nav.js-menu-is-open {
     display: block;
     -webkit-animation-name: initial;
     animation-name: initial; }
@@ -1773,53 +1781,34 @@ th {
 /* ==========================================================================
    Syntax highlighting
    ========================================================================== */
-/* Inline code block */
-code.code-highlight {
+/* Inline code */
+:not(pre) > code {
   margin: 0;
   padding: 0.2em 0.4em;
   font-size: 85%;
   border-radius: 3px; }
 
-/* Multi-line code blocks */
-div.code-highlight,
-figure.highlight {
-  position: relative;
-  margin-bottom: 1em;
-  font-family: Menlo, Consolas, Monaco, "Courier New", Courier, monospace;
+/* Zola's native highlighted code blocks */
+pre.giallo {
+  margin: 0 0 1em;
+  padding: 1em;
   line-height: 1.8; }
-  div.code-highlight > pre,
-  div.code-highlight pre.highlight,
-  figure.highlight > pre,
-  figure.highlight pre.highlight {
-    margin: 0;
-    padding: 1em; }
-
-.highlight table {
-  margin-bottom: 0;
-  font-size: 1em;
-  border: 0; }
-  .highlight table td {
-    padding: 0;
-    width: calc(100% - 1em);
-    border: 0;
-    /* line numbers*/
-    /* code */ }
-    .highlight table td.gutter {
-      padding-right: 1em;
-      width: 1em;
-      border-right: 1px solid;
-      text-align: right; }
-    .highlight table td.code {
-      padding-left: 1em; }
-  .highlight table pre {
-    margin: 0; }
-
-.highlight pre {
+.giallo-l {
+  display: inline-block;
+  min-height: 1lh;
   width: 100%; }
+.giallo-ln {
+  display: inline-block;
+  min-width: 3ch;
+  margin-right: 1em;
+  opacity: 0.8;
+  text-align: right;
+  user-select: none; }
 
-.gist td,
-.gist th {
-  border-bottom: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth; }
+}
 
 /* Utility Clases */
 /* ==========================================================================

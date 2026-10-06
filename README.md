@@ -52,7 +52,7 @@ The rest of the post goes here.
 
 Use a dated filename such as `2026-10-06-my-new-post.md`; the date is removed from the generated `/posts/my-new-post/` URL. Explicit `slug` or `path` front matter controls the URL.
 
-Link between posts with paths such as `@/posts/2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust.md`, optionally followed by `#heading-id`. Zola validates these links. Categories and tags have archive links such as `/categories/#technical` and `/tags/#rust`.
+Link between posts with paths such as `@/posts/2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust.md`, optionally followed by `#heading-id`. Zola validates these links. Categories and tags have archive links such as `/categories/technical/` and `/tags/rust/`.
 
 ## Publish
 
@@ -62,6 +62,8 @@ Set **Settings → Pages → Build and deployment → Source → GitHub Actions*
 
 ## Appearance
 
-The So Simple **3.2.0** styling and theme JavaScript live under `static/assets/`. The upstream copyright and MIT permission notice are included in the stylesheet. Templates in `templates/` provide the layout, responsive navigation, excerpts, archives, share buttons, pagination, and full-content Lunr search.
+The So Simple **3.2.0** styling lives under `static/assets/css/`. The upstream copyright and MIT permission notice are included in the stylesheet. Templates in `templates/` preserve its typography, colors, post layout, excerpts, archives, and share buttons. A small script handles the mobile menu; navigation also works with JavaScript disabled.
 
-Code blocks use the theme's line-number layout. `syntax/code-highlights.json` supplies the exact coloring for unchanged code snippets; new or edited snippets use Zola's native highlighter and the palette defined in `syntax/so-simple.json`.
+Zola handles pagination (`/page/2/`, `/page/3/`, etc.), reading times, taxonomy URLs, feeds, and the full-content search index. The old `/page2/` address redirects to `/page/2/`. Category and tag overviews list terms alphabetically, with links to Zola's term archives. Search uses Zola's generated Elasticlunr index and library, with a small script to display results; it searches titles and post bodies with prefix matching.
+
+Code blocks render directly through Zola's native highlighter with the So Simple palette in `syntax/so-simple.json`. There is no cached highlighting or HTML rewriting. Add `linenos` to a code fence (for example, `rust,linenos`) when line numbers help readers.

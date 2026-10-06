@@ -3,6 +3,7 @@ title = "mcmah309 Blog"
 description = "Tech talk and ongoing open source projects"
 default_language = "en"
 compile_sass = false
+build_search_index = true
 generate_feeds = true
 feed_filenames = ["feed.xml"]
 taxonomies = [
@@ -16,6 +17,9 @@ smart_punctuation = true
 [markdown.highlighting]
 theme = "so-simple"
 extra_themes = ["syntax/so-simple.json"]
+
+[search]
+index_format = "elasticlunr_javascript"
 
 [extra]
 author = "Dillon McMahon"
