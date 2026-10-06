@@ -67,4 +67,4 @@ Zola handles pagination (`/page/2/`, `/page/3/`, etc.), reading times, taxonomy 
 
 Templates use `get_url()` for navigation and assets, and generated permalinks for posts and tags. URLs follow `base_url`, including when the site is served from a subdirectory.
 
-Code blocks render directly through Zola's native highlighter with the So Simple palette in `syntax/so-simple.json`. There is no cached highlighting or HTML rewriting. Add `linenos` to a code fence (for example, `rust,linenos`) when line numbers help readers.
+Code blocks render directly through Zola's native highlighter with its built-in `github-light` theme. There is no cached highlighting or HTML rewriting. Add `linenos` to a code fence (for example, `rust,linenos`) when line numbers help readers.

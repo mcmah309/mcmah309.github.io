@@ -14,8 +14,7 @@ taxonomies = [
 smart_punctuation = true
 
 [markdown.highlighting]
-theme = "so-simple"
-extra_themes = ["syntax/so-simple.json"]
+theme = "github-light"
 
 [search]
 index_format = "elasticlunr_javascript"
