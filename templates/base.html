@@ -26,7 +26,7 @@
   <script>document.documentElement.classList.add('js');</script>
   <link rel="stylesheet" href="{{ get_url(path='assets/css/main.css') }}">
   <link rel="stylesheet" href="{{ get_url(path='assets/css/skins/default.css') }}">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="stylesheet" href="{{ get_url(path='assets/css/skins/rust.css') }}">
   <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='feed.xml') }}">
   <link rel="icon" type="image/x-icon" href="{{ get_url(path='favicon.ico') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path='favicon-32x32.png') }}">
@@ -43,10 +43,10 @@
   </nav>
   <div class="navigation-wrapper">
     <button type="button" id="menu-toggle" aria-controls="primary-nav" aria-expanded="false">Menu</button>
-    <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}<li><a href="{{ get_url(path=link.url, trailing_slash=true) }}">{{ link.title }}</a></li>{% endfor %}</ul></nav>
+    <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}{% set link_url = get_url(path=link.url, trailing_slash=true) %}<li><a href="{{ link_url }}"{% if current_url == link_url %} aria-current="page"{% endif %}>{{ link.title }}</a></li>{% endfor %}</ul></nav>
   </div>
   <header class="masthead"><div class="wrap">
-    {% if current_url == home_url %}<h1 class="site-title animated fadeIn"><a href="{{ home_url }}">{{ config.title }}</a></h1>{% else %}<div class="site-title animated fadeIn"><a href="{{ home_url }}">{{ config.title }}</a></div>{% endif %}
+    {% if current_url == home_url %}<h1 class="site-title animated fadeIn"><a href="{{ home_url }}"><span class="site-mark" aria-hidden="true">::</span> {{ config.title }}</a></h1>{% else %}<div class="site-title animated fadeIn"><a href="{{ home_url }}"><span class="site-mark" aria-hidden="true">::</span> {{ config.title }}</a></div>{% endif %}
     <p class="site-description animated fadeIn" itemprop="description">{{ config.description }}</p>
   </div></header>
   {% block main %}

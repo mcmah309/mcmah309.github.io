@@ -10,6 +10,7 @@
   <footer class="entry-meta">
     {{<blog.read_time post={post} />}}
     <time class="entry-date dt-published" datetime="{{ post.date }}">{{ post.date | date(format="%B %-d, %Y") }}</time>
+    {% if post.taxonomies.tags %}<ul class="entry-tags" aria-label="Post tags">{% for tag in post.taxonomies.tags %}<li><a rel="tag" href="{{ get_taxonomy_url(kind='tags', name=tag) }}">{{ tag }}</a></li>{% endfor %}</ul>{% endif %}
   </footer>
 </article>
 {% endcomponent blog.entry %}

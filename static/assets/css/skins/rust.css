@@ -1,0 +1,330 @@
+/* Rust-inspired skin. The original theme continues to own the page layout. */
+:root {
+  --rust-bg: #f7f5f0;
+  --rust-surface: #eee8df;
+  --rust-text: #292725;
+  --rust-muted: #68605a;
+  --rust-accent: #a34223;
+  --rust-hover: #7d2e16;
+  --rust-border: #d9d1c7;
+  --rust-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, "Liberation Sans", sans-serif;
+  --rust-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--rust-sans);
+}
+
+body {
+  color: var(--rust-text);
+  background: var(--rust-bg);
+  border-top-color: var(--rust-accent);
+  line-height: 1.65;
+}
+
+a {
+  color: var(--rust-accent);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  color: var(--rust-hover);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--rust-accent);
+  outline-offset: 4px;
+}
+
+::selection {
+  color: var(--rust-text);
+  background: #f0c9ae;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.site-title,
+.site-nav,
+#menu-toggle,
+.page-title,
+.entry-title,
+.taxonomy-title,
+.taxonomy-index,
+.page-sidebar,
+.page-pagination-title,
+.entry-meta,
+.pagination,
+.copyright,
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--rust-mono);
+}
+
+.site-title a {
+  color: var(--rust-text);
+  letter-spacing: -0.04em;
+}
+
+.site-title a:hover,
+.site-mark {
+  color: var(--rust-accent);
+}
+
+.site-description {
+  margin-top: 0.5em;
+  color: var(--rust-muted);
+  font-family: var(--rust-sans);
+  font-style: normal;
+}
+
+.site-nav ul {
+  background: var(--rust-surface);
+  color: var(--rust-text);
+  border: 1px solid var(--rust-border);
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+}
+
+.site-nav a {
+  color: var(--rust-muted);
+  border-color: transparent;
+  border-radius: 3px;
+  text-transform: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  color: var(--rust-accent);
+  background: var(--rust-bg);
+  border-color: var(--rust-border);
+}
+
+#menu-toggle {
+  padding: 0.6em;
+  color: var(--rust-bg);
+  background: var(--rust-accent);
+  text-transform: none;
+}
+
+.page-title,
+.entry-title {
+  font-style: normal;
+  letter-spacing: -0.045em;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.page-title {
+  font-size: clamp(1.8rem, 4vw, 2.7rem);
+  margin-bottom: 0.8em;
+}
+
+.entries-list .entry-title {
+  font-size: clamp(1.25rem, 2.8vw, 1.8rem);
+}
+
+.entries-list .entry {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--rust-border);
+}
+
+.entry-title a:hover,
+.entry-excerpt a,
+.entry-tags a {
+  color: var(--rust-accent);
+}
+
+.entry-excerpt a:hover {
+  color: var(--rust-hover);
+}
+
+.entry-meta {
+  color: var(--rust-muted);
+}
+
+.entry-meta .entry-date,
+.entry-meta .read-time,
+.page-sidebar .page-date,
+.page-sidebar .read-time,
+.page-pagination-title {
+  font-family: var(--rust-mono);
+  font-style: normal;
+}
+
+.entry-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0 0.8em;
+  padding: 0;
+  list-style: none;
+  vertical-align: baseline;
+}
+
+.entry-tags a,
+.layout--post .page-taxonomy a {
+  display: inline-block;
+  padding: 0.1em 0.5em;
+  color: var(--rust-accent);
+  background: var(--rust-surface);
+  border: 1px solid var(--rust-border);
+  border-radius: 3px;
+  text-decoration: none;
+}
+
+.entry-tags a:hover,
+.layout--post .page-taxonomy a:hover {
+  color: var(--rust-hover);
+  border-color: var(--rust-accent);
+  text-decoration: none;
+}
+
+.page-taxonomy:not(:last-child)::after {
+  content: " ";
+}
+
+.page-sidebar,
+.taxonomy-title,
+.taxonomy-count,
+.back-to-top,
+.copyright,
+.copyright a {
+  color: var(--rust-muted);
+}
+
+.page-taxonomies-title {
+  font-size: 0.85em;
+  letter-spacing: 0.08em;
+}
+
+.page-content h2,
+.page-content h3 {
+  margin-top: 2rem;
+}
+
+.entry-excerpt h2,
+.entry-excerpt h3 {
+  margin-top: 0;
+}
+
+:not(pre) > code {
+  color: var(--rust-accent);
+  background: var(--rust-surface);
+  border-radius: 3px;
+}
+
+pre {
+  border: 1px solid #3e4247;
+  border-left: 3px solid #c56a42;
+  border-radius: 4px;
+  tab-size: 4;
+}
+
+pre:not(.giallo) {
+  padding: 1em;
+  color: #e1e4e8;
+  background: #24292e;
+}
+
+pre code {
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  font-size: inherit;
+}
+
+blockquote {
+  background: var(--rust-surface);
+  border-left-color: var(--rust-accent);
+}
+
+hr,
+th,
+td,
+.site-footer,
+.footnotes,
+.taxonomy-index a,
+.taxonomy-section:not(:last-child) {
+  border-color: var(--rust-border);
+}
+
+.taxonomy-index a:hover,
+.social-icon:hover {
+  color: var(--rust-accent);
+}
+
+.page-previous,
+.page-next {
+  color: var(--rust-text);
+}
+
+.pagination li a {
+  color: var(--rust-muted);
+  border-color: var(--rust-border);
+}
+
+.pagination li a:hover,
+.pagination li a.current,
+.pagination li a.current.disabled {
+  color: var(--rust-bg);
+  background: var(--rust-accent);
+  border-color: var(--rust-accent);
+}
+
+.pagination li a.disabled {
+  color: var(--rust-muted);
+  background: var(--rust-surface);
+}
+
+.search-input {
+  color: var(--rust-text);
+  background: var(--rust-bg);
+  border: 1px solid var(--rust-border);
+  font-family: var(--rust-mono);
+}
+
+.search-input::placeholder {
+  color: var(--rust-muted);
+}
+
+.btn--primary,
+.btn--accent,
+.btn--primary:visited,
+.btn--accent:visited {
+  color: var(--rust-bg);
+  background: var(--rust-accent);
+}
+
+.btn--primary:hover,
+.btn--accent:hover {
+  color: var(--rust-bg);
+  background: var(--rust-hover);
+}
+
+@media (max-width: 30em) {
+  .entry-tags {
+    display: flex;
+    margin: 0.6em 0 0;
+  }
+
+  .masthead .wrap {
+    padding-inline: 1em;
+  }
+}
