@@ -1,12 +1,9 @@
 ---
 title: Patterns for Modeling Overlapping Variant Data in Rust
 date: 2025-06-11
-slug: patterns-for-modeling-overlapping-variant-data-in-rust
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

@@ -1,12 +1,9 @@
 ---
 title: Introducing `indices`
 date: 2024-04-22
-slug: introducing-indices
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

@@ -109,24 +109,11 @@ blockquote {
 .site-logo-img {
   border-color: #fff; }
 
-.toc-wrapper {
-  border-color: #d9d9d9; }
-  .toc-wrapper h2 {
-    color: #586e75;
-    background-color: #fafafa; }
-  .toc-wrapper li ol {
-    background-color: #fff; }
-  .toc-wrapper li a:hover, .toc-wrapper li a:focus {
-    border-bottom: 1px dotted #cccccc; }
-
 #menu-toggle {
   color: #fff; }
 
 #menu-toggle {
   background-color: #000; }
-
-#markdown-toc {
-  color: #586e75; }
 
 .pagination li a {
   color: #999999;

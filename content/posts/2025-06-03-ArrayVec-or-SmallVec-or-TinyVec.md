@@ -5,8 +5,6 @@ path: posts/ArrayVec-or-SmallVec-or-TinyVec
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

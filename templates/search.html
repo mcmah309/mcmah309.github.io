@@ -8,5 +8,5 @@
 {% block scripts %}
 <script src="{{ get_url(path='elasticlunr.min.js') }}"></script>
 <script src="{{ get_url(path='search_index.' ~ config.default_language ~ '.js') }}"></script>
-<script src="/assets/js/search.js"></script>
+<script src="{{ get_url(path='assets/js/search.js') }}"></script>
 {% endblock scripts %}

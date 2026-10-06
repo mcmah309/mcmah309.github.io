@@ -1,12 +1,9 @@
 ---
 title: 'Announcing `activate`: A sane way to manage environment configuration'
 date: 2024-02-10
-slug: announcing-activate
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

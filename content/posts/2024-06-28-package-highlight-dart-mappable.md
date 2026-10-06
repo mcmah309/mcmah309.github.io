@@ -1,12 +1,9 @@
 ---
 title: Package Highlight - `dart_mappable`
 date: 2024-06-28
-slug: package-highlight-dart-mappable
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - dart
 extra:

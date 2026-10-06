@@ -1,12 +1,9 @@
 ---
 title: Bun Has Bun Shell But So Does Deno
 date: 2025-07-17
-slug: bun-has-bun-shell-but-so-does-deno
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - javascript
 extra:

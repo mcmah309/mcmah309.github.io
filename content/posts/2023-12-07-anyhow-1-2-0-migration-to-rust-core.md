@@ -1,12 +1,9 @@
 ---
 title: Anyhow v1.2.0 Migration to rust_core
 date: 2023-12-07
-slug: anyhow-1-2-0-migration-to-rust-core
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - dart
 extra:

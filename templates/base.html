@@ -1,5 +1,5 @@
 {% set current_url = current_url | default(value=config.base_url) %}
-{% set current_path = current_path | default(value="/404.html") %}
+{% set home_url = get_url(path="@/_index.md") %}
 {% set layout = "page" %}
 {% set title = "" %}
 {% if page %}{% set title = page.title %}{% elif section %}{% set title = section.title or "" %}{% elif taxonomy %}{% set title = taxonomy.name | capitalize %}{% endif %}
@@ -24,13 +24,13 @@
   {% if page and page.date %}<meta property="article:published_time" content="{{ page.date }}">{% endif %}
   <link rel="canonical" href="{{ current_url }}">
   <script>document.documentElement.classList.add('js');</script>
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="stylesheet" href="/assets/css/skins/default.css">
+  <link rel="stylesheet" href="{{ get_url(path='assets/css/main.css') }}">
+  <link rel="stylesheet" href="{{ get_url(path='assets/css/skins/default.css') }}">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
   <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='feed.xml') }}">
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/x-icon" href="{{ get_url(path='favicon.ico') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ get_url(path='favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ get_url(path='favicon-16x16.png') }}">
 </head>
 <body class="layout--{{ layout }} {{ title | slugify }}">
   <nav class="skip-links">
@@ -43,10 +43,10 @@
   </nav>
   <div class="navigation-wrapper">
     <button type="button" id="menu-toggle" aria-controls="primary-nav" aria-expanded="false">Menu</button>
-    <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{% endfor %}</ul></nav>
+    <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}<li><a href="{{ get_url(path=link.url, trailing_slash=true) }}">{{ link.title }}</a></li>{% endfor %}</ul></nav>
   </div>
   <header class="masthead"><div class="wrap">
-    {% if current_path == '/' %}<h1 class="site-title animated fadeIn"><a href="/">{{ config.title }}</a></h1>{% else %}<div class="site-title animated fadeIn"><a href="/">{{ config.title }}</a></div>{% endif %}
+    {% if current_url == home_url %}<h1 class="site-title animated fadeIn"><a href="{{ home_url }}">{{ config.title }}</a></h1>{% else %}<div class="site-title animated fadeIn"><a href="{{ home_url }}">{{ config.title }}</a></div>{% endif %}
     <p class="site-description animated fadeIn" itemprop="description">{{ config.description }}</p>
   </div></header>
   {% block main %}
@@ -59,7 +59,7 @@
     <div class="social-icons"><a class="social-icon" href="https://github.com/mcmah309"><i class="fab fa-github-square fa-2x" title="GitHub"></i></a></div>
     <div class="copyright"><p>&copy; {{ now() | date(format="%Y") }} {{ config.title }}. Powered by <a href="https://www.getzola.org" rel="nofollow">Zola</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p></div>
   </footer>
-  <script src="/assets/js/navigation.js"></script>
+  <script src="{{ get_url(path='assets/js/navigation.js') }}"></script>
   <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
   {% block scripts %}{% endblock scripts %}
 </body>

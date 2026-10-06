@@ -1,12 +1,9 @@
 ---
 title: 'Announcing Rust Core in Dart: Program in Dart Like You Would in Rust'
 date: 2023-12-11
-slug: announcing-rust-core
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - dart
   - rust

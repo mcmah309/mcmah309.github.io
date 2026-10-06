@@ -1,12 +1,9 @@
 ---
 title: 'Solving Rust Data Modeling with View-Types: A Macro-Driven Approach'
 date: 2025-06-11
-slug: solving-data-modeling-in-rust-with-view-types
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

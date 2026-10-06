@@ -37,7 +37,6 @@ title: My new post
 date: 2026-10-06
 authors: [Dillon McMahon]
 taxonomies:
-  categories: [technical]
   tags: [rust]
 extra:
   share: true
@@ -50,9 +49,9 @@ The opening paragraph appears in the home page and archive listings.
 The rest of the post goes here.
 ```
 
-Use a dated filename such as `2026-10-06-my-new-post.md`; the date is removed from the generated `/posts/my-new-post/` URL. Explicit `slug` or `path` front matter controls the URL.
+Use a dated filename such as `2026-10-06-my-new-post.md`; Zola removes the date and derives the `/posts/my-new-post/` URL from the filename. Only set `slug` or `path` when deliberately overriding that URL. The ArrayVec post retains a `path` override to preserve its published uppercase URL.
 
-Link between posts with paths such as `@/posts/2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust.md`, optionally followed by `#heading-id`. Zola validates these links. Categories and tags have archive links such as `/categories/technical/` and `/tags/rust/`.
+Link between posts with paths such as `@/posts/2025-06-11-patterns-for-modeling-overlapping-variant-data-in-rust.md`, optionally followed by `#heading-id`. Zola validates these links. Tags have archive links such as `/tags/rust/`. The `/tags/` overview lists each tag and its post count, linking to those archives.
 
 ## Publish
 
@@ -64,6 +63,8 @@ Set **Settings → Pages → Build and deployment → Source → GitHub Actions*
 
 The So Simple **3.2.0** styling lives under `static/assets/css/`. The upstream copyright and MIT permission notice are included in the stylesheet. Templates in `templates/` preserve its typography, colors, post layout, excerpts, archives, and share buttons. A small script handles the mobile menu; navigation also works with JavaScript disabled.
 
-Zola handles pagination (`/page/2/`, `/page/3/`, etc.), reading times, taxonomy URLs, feeds, and the full-content search index. The old `/page2/` address redirects to `/page/2/`. Category and tag overviews list terms alphabetically, with links to Zola's term archives. Search uses Zola's generated Elasticlunr index and library, with a small script to display results; it searches titles and post bodies with prefix matching.
+Zola handles pagination (`/page/2/`, `/page/3/`, etc.), reading times, taxonomy URLs, feeds, and the full-content search index. The old `/page2/` address redirects to `/page/2/`. The redundant `technical` category has been removed; its old `/categories/` and `/categories/technical/` addresses redirect to the Posts archive using Zola aliases. Search uses Zola's generated Elasticlunr index and library, with a small script to display results; it searches titles and post bodies with prefix matching.
+
+Templates use `get_url()` for navigation and assets, and generated permalinks for posts and tags. URLs follow `base_url`, including when the site is served from a subdirectory.
 
 Code blocks render directly through Zola's native highlighter with the So Simple palette in `syntax/so-simple.json`. There is no cached highlighting or HTML rewriting. Add `linenos` to a code fence (for example, `rust,linenos`) when line numbers help readers.

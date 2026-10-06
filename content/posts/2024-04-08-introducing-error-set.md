@@ -1,12 +1,9 @@
 ---
 title: 'Introducing `error_set`: A Zig-Inspired Approach to Error Handling in Rust'
 date: 2024-04-08
-slug: introducing-error-set
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - rust
 extra:

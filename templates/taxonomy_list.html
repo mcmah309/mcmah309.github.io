@@ -3,14 +3,7 @@
 {% block content %}
 <ul class="taxonomy-index">
 {% for term in terms %}
-<li><a href="#{{ term.slug }}"><strong>{{ term.name }}</strong> <span class="taxonomy-count">{{ term.pages | length }}</span></a></li>
+<li id="{{ term.slug }}"><a href="{{ term.permalink }}"><strong>{{ term.name }}</strong> <span class="taxonomy-count">{{ term.pages | length }}</span></a></li>
 {% endfor %}
 </ul>
-{% for term in terms %}
-<section id="{{ term.slug }}" class="taxonomy-section">
-  <h2 class="taxonomy-title"><a href="{{ term.permalink }}">{{ term.name }}</a></h2>
-  <div class="entries-list">{% for post in term.pages %}{{<blog.entry post={post} />}}{% endfor %}</div>
-  <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
-</section>
-{% endfor %}
 {% endblock content %}

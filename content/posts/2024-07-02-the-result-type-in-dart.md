@@ -1,12 +1,9 @@
 ---
 title: The `Result` Type In Dart
 date: 2024-07-02
-slug: the-result-type-in-dart
 authors:
 - Dillon McMahon
 taxonomies:
-  categories:
-  - technical
   tags:
   - dart
 extra:
