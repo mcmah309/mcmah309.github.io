@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block settings %}{% set layout = taxonomy.name %}{% endblock settings %}
+{% block content %}
+{% set posts = get_section(path="posts/_index.md") %}
+<ul class="taxonomy-index">
+{% for count in range(start=1, end=posts.pages | length + 1) | reverse %}{% for term in terms %}{% if term.pages | length == count %}
+<li><a href="#{{ term.slug }}"><strong>{{ term.name }}</strong> <span class="taxonomy-count">{{ count }}</span></a></li>
+{% endif %}{% endfor %}{% endfor %}
+</ul>
+{% for count in range(start=1, end=posts.pages | length + 1) | reverse %}{% for term in terms %}{% if term.pages | length == count %}
+<section id="{{ term.slug }}" class="taxonomy-section">
+  <h2 class="taxonomy-title">{{ term.name }}</h2>
+  <div class="entries-list">{% for post in term.pages %}{{<blog.entry post={post} />}}{% endfor %}</div>
+  <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+</section>
+{% endif %}{% endfor %}{% endfor %}
+{% endblock content %}

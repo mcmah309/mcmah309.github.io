@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block settings %}{% set layout = "posts" %}{% endblock settings %}
+{% block content %}
+{% set years = [post.year for post in section.pages] | unique | sort | reverse %}
+<ul class="taxonomy-index">{% for year in years %}{% set posts = [post for post in section.pages if post.year == year] %}<li><a href="#{{ year }}"><strong>{{ year }}</strong> <span class="taxonomy-count">{{ posts | length }}</span></a></li>{% endfor %}</ul>
+{% for year in years %}{% set posts = [post for post in section.pages if post.year == year] %}
+<section id="{{ year }}" class="taxonomy-section">
+  <h2 class="taxonomy-title">{{ year }}</h2>
+  <div class="entries-list">{% for post in posts %}{{<blog.entry post={post} />}}{% endfor %}</div>
+  <a href="#page-title" class="back-to-top">Back to top &uarr;</a>
+</section>
+{% endfor %}
+{% endblock content %}

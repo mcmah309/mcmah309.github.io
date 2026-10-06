@@ -1,0 +1,67 @@
+{% set current_url = current_url | default(value=config.base_url) %}
+{% set current_path = current_path | default(value="/404.html") %}
+{% set layout = "page" %}
+{% set title = "" %}
+{% if page %}{% set title = page.title %}{% elif section %}{% set title = section.title or "" %}{% elif taxonomy %}{% set title = taxonomy.name | capitalize %}{% endif %}
+{% block settings %}{% endblock settings %}
+<!DOCTYPE html>
+<!-- So Simple 3.2.0, Copyright 2013-2019 Michael Rose. MIT license; ported to Zola. -->
+<html lang="en-US" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title }} | {{ config.title }}{% else %}{{ config.title }} | {{ config.description }}{% endif %}</title>
+  {% set description = config.description %}
+  {% if page and page.summary %}{% set description = page.summary | striptags | trim %}{% endif %}
+  <meta name="description" content="{{ description }}">
+  <meta property="og:title" content="{{ title or config.title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:site_name" content="{{ config.title }}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:type" content="{% if layout == 'post' %}article{% else %}website{% endif %}">
+  <meta property="og:url" content="{{ current_url }}">
+  {% if page and page.date %}<meta property="article:published_time" content="{{ page.date }}">{% endif %}
+  <link rel="canonical" href="{{ current_url }}">
+  <script>if ('querySelector' in document && 'addEventListener' in window) { document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + 'js'; }</script>
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/skins/default.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i|Lora:400,400i,700,700i">
+  <link rel="alternate" type="application/atom+xml" title="{{ config.title }}" href="{{ get_url(path='feed.xml') }}">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+</head>
+<body class="layout--{{ layout }} {{ title | slugify }}">
+  <nav class="skip-links">
+    <h2 class="screen-reader-text">Skip links</h2>
+    <ul>
+      <li><a href="#primary-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+      <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+      <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+    </ul>
+  </nav>
+  <div class="navigation-wrapper">
+    <a href="#menu-toggle" id="menu-toggle">Menu</a>
+    <nav id="primary-nav" class="site-nav animated drop"><ul>{% for link in config.extra.navigation %}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{% endfor %}</ul></nav>
+  </div>
+  <header class="masthead"><div class="wrap">
+    {% if current_path == '/' %}<h1 class="site-title animated fadeIn"><a href="/">{{ config.title }}</a></h1>{% else %}<div class="site-title animated fadeIn"><a href="/">{{ config.title }}</a></div>{% endif %}
+    <p class="site-description animated fadeIn" itemprop="description">{{ config.description }}</p>
+  </div></header>
+  {% block main %}
+  <main id="main" class="main-content" aria-label="Content"><article><div class="page-wrapper">
+    <header class="page-header"><h1 id="page-title" class="page-title">{{ title }}</h1></header>
+    <div class="page-content">{% block content %}{% endblock content %}</div>
+  </div></article></main>
+  {% endblock main %}
+  <footer id="footer" class="site-footer">
+    <div class="social-icons"><a class="social-icon" href="https://github.com/mcmah309"><i class="fab fa-github-square fa-2x" title="GitHub"></i></a></div>
+    <div class="copyright"><p>&copy; {{ now() | date(format="%Y") }} {{ config.title }}. Powered by <a href="https://www.getzola.org" rel="nofollow">Zola</a> &amp; <a href="https://github.com/mmistakes/so-simple-theme" rel="nofollow">So Simple</a>.</p></div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/assets/js/main.min.js"></script>
+  <script src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+  {% block scripts %}{% endblock scripts %}
+</body>
+</html>

@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block settings %}{% set title = term.name %}{% endblock settings %}
+{% block content %}<div class="entries-list">{% for post in term.pages %}{{<blog.entry post={post} />}}{% endfor %}</div>{% endblock content %}

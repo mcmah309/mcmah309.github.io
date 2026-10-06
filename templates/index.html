@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block settings %}{% set layout = "home" %}
+{% if section.extra.page_number %}
+{% set root = get_section(path="_index.md") %}
+{% set number = section.extra.page_number %}
+{% set start = (number - 1) * 10 %}
+{% set end = number * 10 %}
+{% set paginator = {
+  "pages": root.pages[start:end],
+  "number_pagers": (root.pages | length / 10) | round(method="ceil") | int,
+  "current_index": number,
+  "previous": number > 1,
+  "next": root.pages | length > end,
+} %}
+{% endif %}{% endblock settings %}
+{% block content %}
+<div class="entries-list">{% for post in paginator.pages %}{{<blog.entry post={post} />}}{% endfor %}</div>
+{% if paginator.number_pagers > 1 %}
+<nav class="pagination"><ul>
+  <li>{% if paginator.previous %}<a href="{{<blog.pagination_url number={paginator.current_index - 1} />}}">Previous</a>{% else %}<a href="#" class="disabled"><span aria-hidden="true">Previous</span></a>{% endif %}</li>
+  {% for number in range(start=1, end=paginator.number_pagers + 1) %}
+  <li>{% if number == paginator.current_index %}<a href="#" class="disabled current">{{ number }}</a>{% else %}<a href="{{<blog.pagination_url number={number} />}}">{{ number }}</a>{% endif %}</li>
+  {% endfor %}
+  <li>{% if paginator.next %}<a href="{{<blog.pagination_url number={paginator.current_index + 1} />}}">Next</a>{% else %}<a href="#" class="disabled"><span aria-hidden="true">Next</span></a>{% endif %}</li>
+</ul></nav>
+{% endif %}
+{% endblock content %}

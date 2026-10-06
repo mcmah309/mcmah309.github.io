@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block settings %}{% set layout = "post" %}{% endblock settings %}
+{% block main %}
+<main id="main" class="main-content" aria-label="Content"><article class="h-entry"><div class="page-wrapper">
+  <header class="page-header"><h1 id="page-title" class="page-title p-name">{{<blog.title post={page} />}}</h1></header>
+  <div class="page-sidebar">
+    <div class="page-author h-card p-author"><div class="author-info">
+      <div class="author-name"><span class="p-name">{{ (page.authors | first) or config.extra.author }}</span></div>
+      {{<blog.read_time post={page} />}}
+      <time class="page-date dt-published" datetime="{{ page.date }}"><a class="u-url" href="{{ page.path }}">{{ page.date | date(format="%B %-d, %Y") }}</a></time>
+    </div></div>
+    {% for name in ["categories", "tags"] %}{% if page.taxonomies[name] %}
+    <h3 class="page-taxonomies-title">{{ name | capitalize }}</h3>
+    <ul class="page-taxonomies">{% for value in page.taxonomies[name] %}<li class="page-taxonomy"><a {% if name == 'categories' %}class="p-category"{% else %}rel="tag"{% endif %} href="/{{ name }}/#{{ value | slugify }}" title="{% if name == 'categories' %}Pages filed under{% else %}Pages tagged{% endif %} {{ value }}">{{ value }}</a></li>{% endfor %}</ul>
+    {% endif %}{% endfor %}
+  </div>
+  <div class="page-content">
+    <div class="e-content">{{<blog.content content={page.content} />}}</div>
+    {% if page.extra.share | default(value=false) %}{% include "share.html" %}{% endif %}
+    <nav class="page-pagination" role="navigation">
+      {% if page.higher %}<a class="page-previous" href="{{ page.higher.path }}"><h4 class="page-pagination-label">Previous</h4>
+      <span class="page-pagination-title"><i class="fas fa-arrow-left"></i> {{<blog.title post={page.higher} />}}
+      </span>
+      </a>{% endif %}
+      {% if page.lower %}<a class="page-next" href="{{ page.lower.path }}"><h4 class="page-pagination-label">Next</h4>
+      <span class="page-pagination-title">{{<blog.title post={page.lower} />}} <i class="fas fa-arrow-right"></i>
+      </span>
+      </a>{% endif %}
+    </nav>
+  </div>
+</div></article></main>
+{% endblock main %}

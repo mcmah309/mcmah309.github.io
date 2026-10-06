@@ -1,0 +1,41 @@
+{% component blog.title(post) %}{{ post.title | markdown(inline=true) | striptags | trim | safe }}{% endcomponent blog.title %}
+{% component blog.read_time(post) %}
+{# Include displayed line numbers in the reading-time word count. #}
+{%- set words = (post.content | striptags | wordcount) + (post.content | split(pat='class="giallo-l"') | length) - 1 -%}
+<span class="read-time">{% if words < 200 %}~1{% else %}{{ (words / 200) | round(method="floor") | int }}{% endif %} min read</span>
+{% endcomponent blog.read_time %}
+{% component blog.entry(post) %}
+{% set excerpt = post.summary or "" %}
+<article class="entry h-entry">
+  <header class="entry-header"><h3 class="entry-title p-name"><a href="{{ post.path }}" rel="bookmark">{{<blog.title post={post} />}}</a></h3></header>
+  <div class="entry-excerpt p-summary">{{ excerpt | replace(from="<code>", to='<code class="language-plaintext code-highlight">') | safe }}</div>
+  <footer class="entry-meta">
+    {{<blog.read_time post={post} />}}
+    <time class="entry-date dt-published" datetime="{{ post.date }}">{{ post.date | date(format="%B %-d, %Y") }}</time>
+  </footer>
+</article>
+{% endcomponent blog.entry %}
+
+{% component blog.pagination_url(number) %}{% if number == 1 %}/{% elif number == 2 %}/page2/{% else %}/page/{{ number }}/{% endif %}{% endcomponent blog.pagination_url %}
+
+{# Render Zola's highlighted lines in the theme's table layout. #}
+{% component blog.content(content) %}
+{%- set chunks = content | regex_replace(pattern='(?s)<li>[ \t\r\n]*<p>(.*?)</p>[ \t\r\n]*(<pre class="giallo")', rep='<li>$1\n$2') | replace(from='<span id="continue-reading"></span>', to='') | split(pat='<pre class="giallo"') -%}
+{{- chunks[0] | replace(from="<code>", to='<code class="language-plaintext code-highlight">') | safe -}}
+{%- set code_highlights = load_data(path="syntax/code-highlights.json") -%}
+{%- for chunk in chunks[1:] -%}
+{%- set parts = chunk | split(pat="</pre>") -%}
+{%- set block = parts[0] -%}
+{%- set count = (block | split(pat='<span class="giallo-l">') | length) - 1 -%}
+{%- set code = block | regex_replace(pattern='(?s)^[^>]*><code[^>]*>', rep='') | regex_replace(pattern='</code>$', rep='') | replace(from='<span class="giallo-l">', to='') | regex_replace(pattern='</span>(\n|$)', rep='$1') -%}
+{%- set source_text = (code | striptags) ~ "\n" -%}
+{%- if source_text in code_highlights -%}
+{%- set code = code_highlights[source_text] -%}
+{%- else -%}
+{%- set code = code ~ "\n" -%}
+{%- endif -%}
+<div class="code-highlight"><div class="highlight"><pre class="highlight"><code><table class="code-table"><tbody><tr><td class="code-gutter gl"><pre class="lineno">{% for number in range(start=1, end=count + 1) %}{{ number }}
+{% endfor %}</pre></td><td class="code-source"><pre>{{ code | safe }}</pre></td></tr></tbody></table></code></pre></div></div>
+{{- parts[1:] | join(sep="</pre>") | replace(from="<code>", to='<code class="language-plaintext code-highlight">') | safe -}}
+{%- endfor -%}
+{% endcomponent blog.content %}

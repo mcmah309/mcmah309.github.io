@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block settings %}{% set layout = "search" %}{% endblock settings %}
+{% block content %}
+<form onsubmit="return false;"><input type="input" id="search" class="search-input" placeholder="Enter your search term..." autofocus></form>
+<div id="results"></div>
+{% endblock content %}
+{% block scripts %}
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script>
+const store = [
+{% set posts = get_section(path="posts/_index.md") %}
+{% for post in posts.pages | reverse %}{
+  "title": {{ post.title | json_encode | safe }},
+  "excerpt": {{ post.content | striptags | json_encode | safe }},
+  "categories": {{ post.taxonomies.categories | json_encode | safe }},
+  "tags": {{ post.taxonomies.tags | json_encode | safe }},
+  "url": {{ post.path | json_encode | safe }}
+}{% if not loop.last %},{% endif %}{% endfor %}
+];
+</script>
+<script src="/assets/js/search.js"></script>
+{% endblock scripts %}
