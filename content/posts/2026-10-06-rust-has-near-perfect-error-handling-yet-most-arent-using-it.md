@@ -10,7 +10,7 @@ extra:
   share: true
 ---
 
-Rust already has most of what I want from error handling: explicit control flow, errors as values, and concise propagation with `?`. The friction comes when deciding what to put in the error half of `Result`. We often end up choosing between precise types that require boilerplate and convenient types that hide which errors can occur. [eros](https://github.com/mcmah309/eros) brings these approaches together, while keeping context attached as errors travel through the call stack.
+Rust already has most of what I want from error handling: explicit control flow, errors as values, and concise propagation with `?`. The friction comes when deciding what to put in the error half of `Result`. We often end up choosing between precise types that require boilerplate and convenient types that hide which errors can occur. But precision and convenience do not have to be competing goals. Error types should compose as easily as the functions that return them.
 
 <!-- more -->
 
@@ -43,17 +43,11 @@ Alternatively, [anyhow](https://github.com/dtolnay/anyhow) makes propagation and
 
 The usual advice is to use typed errors in libraries and opaque errors in applications. But applications need typed recovery too, and libraries often contain internal operations whose callers only need to propagate a failure. The useful distinction is whether a caller needs to **do something different based on the error type**.
 
-## Error Sets Without Enum Boilerplate
+## Error Types Should Compose
 
-The examples below use these dependencies in `Cargo.toml`:
+What we actually want to say is simple: this function can fail with an `io::Error` or a `ParseIntError`. Declaring an enum is one way to express that, but the combination itself should not need a new type declaration.
 
-```toml
-[dependencies]
-eros = "0.8"
-thiserror = "2"
-```
-
-With `eros`, the port example becomes:
+I use [eros](https://github.com/mcmah309/eros) to express this as an error set. The port example becomes:
 
 ```rust
 use eros::IntoUnion;
@@ -65,23 +59,17 @@ fn load_port(path: &str) -> eros::Result<u16, (io::Error, ParseIntError)> {
 }
 ```
 
-No new enum or conversions need to be declared.
-
-`eros::Result<T, E>` is an alias for the ordinary `Result<T, ErrorUnion<E>>`. Here, `ErrorUnion<(io::Error, ParseIntError)>` holds **one** of the listed errors. The tuple describes the possible types; it does not store both errors. This is an *open sum type*: we describe the combination we need without declaring a new named enum for that combination.
-
-`.union()` wraps an ordinary result's error in an `ErrorUnion`, inferring the destination set from the surrounding code. If we remove `io::Error` from this signature, the file read no longer compiles. We cannot accidentally propagate an error that the signature does not include.
-
-For reuse, the set can be named with a normal type alias:
+No new enum or conversions need to be declared. For reuse, the set can be named with a normal type alias:
 
 ```rust
 type PortErrors = (std::io::Error, std::num::ParseIntError);
 ```
 
-The errors can come from the standard library, dependencies, or custom types defined with `thiserror`. Eros handles combining them.
+`eros::Result<T, E>` is an alias for the ordinary `Result<T, ErrorUnion<E>>`. Here, `ErrorUnion<(io::Error, ParseIntError)>` holds **one** of the listed errors. The tuple describes the possible types; it does not store both errors. This is an *open sum type*: we describe the combination we need without declaring a new named enum for that combination.
 
-### Composing Functions
+`.union()` wraps an ordinary result's error in an `ErrorUnion`, inferring the destination set from the surrounding code. If we remove `io::Error` from this signature, the file read no longer compiles. We cannot accidentally propagate an error that the signature does not include.
 
-Suppose we also load the server's host address. Building on `load_port`:
+This becomes more useful when functions are combined. Suppose we also load the server's host address. Building on `load_port`:
 
 ```rust
 use eros::ReshapeUnion;
@@ -101,9 +89,7 @@ fn bind_server() -> eros::Result<TcpListener, (io::Error, AddrParseError, ParseI
 
 `.widen()` converts an existing union into a union whose set contains all its possible errors. Both configuration operations can return an `io::Error`, so we list it once. Context can describe which operation failed.
 
-Widening into a set that omits a possible error is rejected at compile time.
-
-> Side: Rust's overlapping `From` implementations prevent Eros from making every conversion implicit, hence the `.union()` and `.widen()` calls before `?` when signature changes are needed.
+Widening into a set that omits a possible error is rejected at compile time. The caller describes the combined possibilities without wrapping each function's errors in another layer of enums. Adding another operation means adding its possible errors to the set, and the compiler checks that we have accounted for them.
 
 ## Handling Errors Changes The Type
 
@@ -120,7 +106,9 @@ fn port_or_default(path: &str) -> eros::Result<u16, (ParseIntError,)> {
 }
 ```
 
-The return type now contains only `ParseIntError`. `recover` handles the selected error type and turns the handler's value into a success. Other errors pass through unchanged. The handler retains the error's context and backtrace.
+The return type now contains only `ParseIntError`. `recover` handles the selected error type and turns the handler's value into a success. Other errors pass through unchanged.
+
+This is the part I find most useful. The signature describes what can still go wrong after our recovery policy has run. A caller does not need to know that an I/O error was possible somewhere below it, because that error has already been handled.
 
 We can also recover a group of error types. If both unreadable files and invalid numbers should use a default, all possible errors can be removed:
 
@@ -134,26 +122,9 @@ fn forgiving_port(path: &str) -> u16 {
 
 After recovery, the result has the empty error set `()`. `.into_value()` extracts the value, and only compiles when no possible errors remain.
 
-### Fallible Recovery
-
-A fallback can also fail. `try_recover` lets its handler return another result:
-
-```rust
-use eros::ErrorUnion;
-
-fn port_with_fallback(path: &str, fallback: &str) -> eros::Result<u16, (ParseIntError,)> {
-    load_port(path).try_recover(|error: ErrorUnion<(io::Error,)>| {
-        eprintln!("{error:?}; parsing fallback port");
-        fallback.parse::<u16>().union()
-    })
-}
-```
-
-The output set covers both the unhandled errors and any errors from the fallback. Here, either the file contents or the fallback can produce a `ParseIntError`.
-
 ## Types Only Where They Matter
 
-Sometimes the caller has no useful recovery policy. It only needs to propagate an error or report it at the top of the program. Eros supports that directly:
+Sometimes the caller has no useful recovery policy. It only needs to propagate an error or report it at the top of the program. Carrying every possible error type through that signature may just be noise:
 
 ```rust
 fn load_port_untyped(path: &str) -> eros::Result<u16> {
@@ -162,16 +133,7 @@ fn load_port_untyped(path: &str) -> eros::Result<u16> {
 }
 ```
 
-Without a tuple, the error set defaults to `AnyError`. Ad hoc failures can be created with `error!`, `bail!`, and `ensure!`:
-
-```rust
-fn validate_port(port: u16) -> eros::Result<()> {
-    eros::ensure!(port != 0, "Server port must be nonzero");
-    Ok(())
-}
-```
-
-Typed results can flow into this catch-all form with `?` as well:
+Without a tuple, the error set defaults to `AnyError`. Typed results can flow into this catch-all form with `?` as well:
 
 ```rust
 fn start_server() -> eros::Result<TcpListener> {
@@ -181,25 +143,13 @@ fn start_server() -> eros::Result<TcpListener> {
 
 We can keep lower-level functions precise for callers that need recovery, while allowing other callers to propagate the same errors through a simpler signature. Context and backtraces survive this conversion.
 
-We can also select known error types from `AnyError` with `.narrow()`:
-
-```rust
-fn select_port_error(error: ErrorUnion) -> Result<ErrorUnion<PortErrors>, ErrorUnion> {
-    error.narrow::<PortErrors, _>()
-}
-```
-
-The stored error is checked at runtime. An `io::Error` or `ParseIntError` returns in the typed union; anything else remains `AnyError`. Both branches retain the error's diagnostics.
-
-Similarly, `.recover::<io::Error, _>(|_| 8080)` can handle I/O failures in an untyped result. The remaining error set stays `AnyError`, since other error types are still possible.
-
-The useful distinction is whether the caller needs the compiler to track the possible error types. If it only needs to propagate or report a failure, carrying every type through the signature may just be noise.
+This choice can be made at each boundary. We do not need to commit an entire library or application to one approach. Keep the types where callers make decisions based on them, and erase them where callers only need to pass the failure along.
 
 ## Errors Need Operational Context
 
 A precise error type does not tell us which file was being read or why. `PermissionDenied` is useful for making a decision, but we still need the path and operation to understand the failure.
 
-Eros provides `.context()` and lazy `.with_context()` methods. It also provides a function attribute that attaches context to any error returned from the function:
+That information belongs with the error as it moves through the program. For example:
 
 ```rust
 use eros::{Context, context};
@@ -234,65 +184,14 @@ invalid digit found in string
 
 The original error stays the main message, with the operations listed in the order they were added.
 
-For context consisting of selected parameters, the format can be generated:
-
-```rust
-#[context]
-fn read_port(#[fmt("{}")] path: &str) -> eros::Result<u16> {
-    load_port_untyped(path)
-}
-```
-
-Only annotated parameters are included.
-
 I generally prefer a function to describe its own operation and relevant inputs. Every caller then gets that context. Call sites can add context too, when they know something the callee does not. We can report the failure once with the operations that led to it.
 
-### Reporting The Error
-
-The formatting choices have distinct purposes:
-
-| Format | Output |
-| --- | --- |
-| `{}` | Inner error and its source chain |
-| `{:#}` | Inner error only |
-| `{:?}` | Error, sources, context, and available locations and backtrace |
-| `{:#?}` | Error, sources, and context, omitting locations and backtrace |
-
-With `tracing`, `error = ?error` uses the detailed report and `error = %error` uses `Display`.
-
-## Using Eros Across API Boundaries
-
-Eros works with normal `Result` values, so adoption can happen one function at a time. A dependency's error can enter a union through `.union()`.
-
-Inside a library, we can compose typed sets and still expose a conventional public error enum. For example, using the original `PortError`:
-
-```rust
-use eros::E2;
-
-pub fn public_load_port(path: &str) -> Result<u16, PortError> {
-    load_port(path).map_err(|error| match error.into_enum() {
-        E2::A(error) => PortError::Io(error),
-        E2::B(error) => PortError::Parse(error),
-    })
-}
-```
-
-`.into_enum()` produces an enum for exhaustive matching, with variants corresponding to the tuple's order. It extracts the errors and discards Eros diagnostics. `.as_enum()` provides borrowed matching while keeping the union intact.
-
-For APIs that require `core::error::Error`, `.into_std_error()` provides an adapter that retains diagnostics. Existing `anyhow` errors can also be integrated through the optional `anyhow` feature and `ErrorUnion::from_anyhow`.
-
-## Portability And Performance
-
-Stored errors must implement `core::error::Error + Send + Sync + 'static`. The same constructs work in synchronous and asynchronous code, and Eros supports `no_std` with `alloc` when default features are disabled.
-
-Context and backtrace support are enabled by default. Libraries can disable default features and let the final application choose the diagnostics it needs. The optional `location` feature records source locations and works without `std`.
-
-The error and its diagnostics live in a boxed allocation. This keeps the union's stack size independent of its possible errors, and widening or erasing the set reuses that allocation. Creating an error still has an allocation cost, and context and backtrace capture have their own costs.
+The type tells us which recovery policy to apply. The context tells us what happened if recovery is not possible. We should be able to keep both without building a new error enum every time an error passes through another function.
 
 ## Conclusion
 
-I previously explored precise error sets with [error_set](@/posts/2024-04-08-introducing-error-set.md). Eros takes that idea further by combining error sets with optional type erasure, recovery that removes handled types, and diagnostics that survive composition.
+I previously explored precise error sets with [error_set](@/posts/2024-04-08-introducing-error-set.md). What still interests me is how little needs to change about Rust's existing error handling to make this work. We still return `Result`, propagate with `?`, and handle errors as values. The missing piece is making the possible errors easy to compose and reduce as they move through the program.
 
-This is why I think Rust's error handling is near perfect with the right constructs. `Result` gives us explicit control flow, `?` gives us concise propagation, and `ErrorUnion` lets each function describe the errors its callers need to reason about. We can handle those errors where there is a useful policy, simplify the signature where there is not, and keep the operational context needed to understand a failure.
+This is why I think Rust's error handling is near perfect with the right constructs. Each function can describe the errors its callers need to reason about. We can handle those errors where there is a useful policy, simplify the signature where there is not, and keep the operational context needed to understand a failure. Precise error handling becomes much easier to use when it follows the way we already compose functions.
 
 *The eros source and README are available on [GitHub](https://github.com/mcmah309/eros).*
