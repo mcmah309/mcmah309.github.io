@@ -1,5 +1,5 @@
 ---
-title: Rust Has Near Perfect Error Handling Yet Most Aren't Using It
+title: The Missing Piece in Rust Error Handling
 date: 2026-10-06
 authors:
 - Dillon McMahon
