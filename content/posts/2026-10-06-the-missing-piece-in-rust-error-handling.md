@@ -217,7 +217,7 @@ fn parsePort(input: []const u8) PortErrors!u16 {
 Zig's error codes have no attached payloads. In Rust, we can keep the same composability and carry actual data:
 
 ```rust
-use eros::{IntoUnion, context};
+use eros::IntoUnion;
 use std::num::ParseIntError;
 
 #[derive(Debug, thiserror::Error)]
@@ -228,7 +228,6 @@ struct ZeroPort {
 
 type PortErrors = (ParseIntError, ZeroPort);
 
-#[context("Parse server port from {:?}", input)]
 fn parse_port(input: &str) -> eros::Result<u16, PortErrors> {
     let port = input.parse::<u16>().union()?;
     if port == 0 {
