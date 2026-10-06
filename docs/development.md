@@ -36,6 +36,7 @@ Link between posts with paths such as `@/posts/2025-06-11-patterns-for-modeling-
 
 ## Publish
 
-`.github/workflows/pages.yml` builds and checks pull requests and publishes pushes to `master` through GitHub Pages. No generated files need to be committed.
+1. In the [repository's Pages settings](https://github.com/mcmah309/mcmah309.github.io/settings/pages), set **Build and deployment → Source → GitHub Actions**.
+2. Go to **Actions → Publish Zola site → Run workflow**, select `master`, and run it.
 
-Set **Settings → Pages → Build and deployment → Source → GitHub Actions** in the repository settings.
+After this one-time setup, pushes to `master` automatically build and publish the site. Pull requests build and check the site. No generated files need to be committed.

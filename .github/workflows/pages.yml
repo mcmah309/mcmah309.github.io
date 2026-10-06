@@ -32,7 +32,7 @@ jobs:
           path: public
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-24.04
     permissions:
@@ -42,6 +42,19 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Branch publishing starts a separate Jekyll deployment that can overwrite
+      # this workflow's Zola artifact, even when both runs succeed.
+      - name: Verify Pages publishing source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          build_type="$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.build_type')"
+          if [[ "$build_type" != "workflow" ]]; then
+            echo "::error::Set Settings > Pages > Build and deployment > Source to GitHub Actions, then rerun this workflow. Branch publishing runs Jekyll and overwrites the Zola site."
+            exit 1
+          fi
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
