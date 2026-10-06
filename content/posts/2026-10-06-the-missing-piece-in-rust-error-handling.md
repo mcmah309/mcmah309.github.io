@@ -195,3 +195,45 @@ I previously explored precise error sets with [error_set](@/posts/2024-04-08-int
 This is why I think Rust's error handling is near perfect with the right constructs. Each function can describe the errors its callers need to reason about. We can handle those errors where there is a useful policy, simplify the signature where there is not, and keep the operational context needed to understand a failure. Precise error handling becomes much easier to use when it follows the way we already compose functions.
 
 *The eros source and README are available on [GitHub](https://github.com/mcmah309/eros).*
+
+## Bonus: The Connection To Zig
+
+Zig's native [error sets](https://ziglang.org/documentation/0.17.0/#Error-Set-Type) follow the same idea:
+
+```zig
+const std = @import("std");
+
+const PortErrors = std.fmt.ParseIntError || error{ ZeroPort };
+
+fn parsePort(input: []const u8) PortErrors!u16 {
+    const port = try std.fmt.parseInt(u16, input, 10);
+    if (port == 0) return error.ZeroPort;
+    return port;
+}
+```
+
+`||` combines the sets, and `try` propagates errors like `?`. Zig can also infer the set when the return type is written as `!u16`.
+
+Zig's error codes have no attached payloads. In Rust, we can keep the same composability and carry actual data:
+
+```rust
+use eros::{IntoUnion, context};
+use std::num::ParseIntError;
+
+#[derive(Debug, thiserror::Error)]
+#[error("Port must be nonzero, got {input:?}")]
+struct ZeroPort {
+    input: String,
+}
+
+type PortErrors = (ParseIntError, ZeroPort);
+
+#[context("Parse server port from {:?}", input)]
+fn parse_port(input: &str) -> eros::Result<u16, PortErrors> {
+    let port = input.parse::<u16>().union()?;
+    if port == 0 {
+        return Err(ZeroPort { input: input.into() }).union();
+    }
+    Ok(port)
+}
+```
